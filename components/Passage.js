@@ -9,11 +9,51 @@ import RegularText from "./RegularText";
 import VerseText from "./VerseText";
 import HeaderText from "./HeaderText";
 import TextNoNewline from "./TextNoNewline";
-import React from "react";
+import React, { useRef, useState } from "react";
 
 const Passage = ({ html_str }) => {
+  const scrollViewRef = useRef(null);
+  const [textLayout, setTextLayout] = useState(null);
+  const [scrollViewHeight, setScrollViewHeight] = useState(0);
+
+  const handleTextPress = (event) => {
+    if (scrollViewRef.current && event?.nativeEvent) {
+      console.log(event.nativeEvent);
+      console.log(event.target);
+      const pageY = event.nativeEvent.pageY - 50;
+      console.log("ScrollViewHeight: ", scrollViewHeight);
+      console.log("PageY: " + pageY);
+      //   const scrollOffset = pageY + 250 - scrollViewHeight;
+      const scrollOffset = scrollViewHeight - pageY;
+      // No need to scroll
+      if (scrollOffset > 100) {
+        return;
+      } else if (scrollOffset < 0) {
+        return;
+      }
+      const scrollUp = 200 - scrollOffset; // 200 is how big of a footer you want to display.
+      console.log("ScrollOffset", scrollOffset);
+      scrollViewRef.current.scrollTo({
+        y: scrollUp,
+        animated: true,
+      });
+    }
+  };
+
+  const handleTextLayout = (event) => {
+    const { layout } = event.nativeEvent;
+    setTextLayout(layout);
+  };
+
   return (
-    <ScrollView style={{ paddingHorizontal: 15 }}>
+    <ScrollView
+      ref={scrollViewRef}
+      onLayout={(event) => {
+        const { height } = event.nativeEvent.layout;
+        setScrollViewHeight(height);
+      }}
+      style={{ paddingHorizontal: 15 }}
+    >
       <HeaderText id="p01001001_01-1">The Creation of the World</HeaderText>
       <RegularText id="p01001001_06-1" class="starts-chapter">
         <TextNoNewline>
@@ -117,7 +157,7 @@ const Passage = ({ html_str }) => {
         </TextNoNewline>
       </RegularText>
       <RegularText id="p01001013_06-1">
-        <TextNoNewline>
+        <TextNoNewline onPress={handleTextPress} onLayout={handleTextLayout}>
           <VerseText class="verse-num" id="v01001014-1">
             14&nbsp;
           </VerseText>
@@ -219,27 +259,29 @@ const Passage = ({ html_str }) => {
           every creeping thing that creeps on the earth.”
         </TextNoNewline>
       </RegularText>
+
       <RegularText class="block-indent">
-        <RegularText class="begin-line-group"></RegularText>
-        <RegularText id="p01001027_06-1" class="line">
-          <TextNoNewline>
+        <TextNoNewline>
+          <RegularText class="begin-line-group"></RegularText>
+          <RegularText id="p01001027_06-1" class="line">
             <VerseText class="verse-num inline" id="v01001027-1">
               27&nbsp;
             </VerseText>
             &nbsp;&nbsp;So God created man in his own image,
-          </TextNoNewline>
-        </RegularText>
-        <Text>{"\n"}</Text>
-        <RegularText id="p01001027_06-1" class="indent line">
-          &nbsp;&nbsp;&nbsp;&nbsp;in the image of God he created him;
-        </RegularText>
-        <Text>{"\n"}</Text>
-        <RegularText id="p01001027_06-1" class="indent line">
-          &nbsp;&nbsp;&nbsp;&nbsp;male and female he created them.
-        </RegularText>
-        <Text>{"\n"}</Text>
-        <RegularText class="end-line-group"></RegularText>
+          </RegularText>
+          <Text>{"\n"}</Text>
+          <RegularText id="p01001027_06-1" class="indent line">
+            &nbsp;&nbsp;&nbsp;&nbsp;in the image of God he created him;
+          </RegularText>
+          <Text>{"\n"}</Text>
+          <RegularText id="p01001027_06-1" class="indent line">
+            &nbsp;&nbsp;&nbsp;&nbsp;male and female he created them.
+          </RegularText>
+          <Text>{"\n"}</Text>
+          <RegularText class="end-line-group"></RegularText>
+        </TextNoNewline>
       </RegularText>
+
       <RegularText id="p01001027_06-1">
         <TextNoNewline>
           <VerseText class="verse-num" id="v01001028-1">
@@ -266,7 +308,7 @@ const Passage = ({ html_str }) => {
           to everything that creeps on the earth, everything that has the breath
           of life, I have given every green plant for food.” And it was so.{" "}
         </TextNoNewline>
-        <TextNoNewline>
+        <TextNoNewline onPress={handleTextPress} onLayout={handleTextLayout}>
           <VerseText class="verse-num" id="v01001031-1">
             31&nbsp;
           </VerseText>

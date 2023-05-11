@@ -3,11 +3,15 @@ import { Text, TouchableOpacity } from "react-native";
 
 const TextNoNewline = forwardRef((props, ref) => {
   const [isUnderline, setIsUnderline] = useState(false);
-  const toggleUnderline = () => setIsUnderline(!isUnderline);
+  const toggleUnderline = (event) => {
+    setIsUnderline(!isUnderline);
+    props.onPress && props.onPress(event);
+  };
 
   return (
     <Text
       {...props}
+      ref={ref}
       style={[
         { color: "white" },
         isUnderline && {
@@ -17,6 +21,7 @@ const TextNoNewline = forwardRef((props, ref) => {
         },
       ]}
       onPress={toggleUnderline}
+      onLayout={props.onLayout}
     />
   );
 });
