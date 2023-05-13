@@ -6,9 +6,9 @@ const HeaderText = ({ children, ...props }) => {
     <Text
       style={{
         color: "white",
-        paddingTop: 5,
-        paddingBottom: 5,
-        fontSize: 18,
+        paddingTop: 10,
+        paddingBottom: 10,
+        fontSize: 20,
         fontWeight: "bold",
       }}
       {...props}

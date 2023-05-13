@@ -2,7 +2,15 @@ import { View, StyleSheet, PanResponder, Animated } from "react-native";
 
 import React, { useRef, useState } from "react";
 
-const SwipeableFooter = ({ children }) => {
+const SwipeableFooter = ({
+  children,
+  height,
+  setShowFooter,
+  setShowCommentFooter,
+  setIsReset,
+  setUnderlineIds,
+  hideCommentInput,
+}) => {
   const [isVisible, setIsVisible] = useState(true);
   const panResponder = useRef(
     PanResponder.create({
@@ -26,7 +34,7 @@ const SwipeableFooter = ({ children }) => {
     })
   ).current;
 
-  const FOOTER_HEIGHT = 120; // Replace with the actual height of your footer
+  const FOOTER_HEIGHT = height; // Replace with the actual height of your footer
   const footerPosition = useRef(new Animated.Value(0)).current;
 
   const animateFooterOut = () => {
@@ -65,7 +73,20 @@ const SwipeableFooter = ({ children }) => {
     return (
       <>
         <Animated.View
-          style={[styles.footer, footerStyle]}
+          style={[
+            {
+              position: "absolute",
+              bottom: -1 * (900 - height),
+              left: 0,
+              right: 0,
+              height: 900, // Replace with the actual height of your footer
+              backgroundColor: "#0a0a0a",
+              borderTopWidth: 1,
+              borderTopColor: "black",
+              padding: 10,
+            },
+            footerStyle,
+          ]}
           {...panResponder.panHandlers}
         >
           <View style={styles.handle} />

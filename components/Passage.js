@@ -6,11 +6,10 @@ import {
   StyleSheet,
   TextInput,
 } from "react-native";
-import RegularText from "./RegularText";
-import VerseText from "./VerseText";
-import HeaderText from "./HeaderText";
-import TextNoNewline from "./TextNoNewline";
-import SwipeableFooterInput from "./SwipeableFooterInput";
+import RegularText from "./CustomTexts/RegularText";
+import VerseText from "./CustomTexts/VerseText";
+import HeaderText from "./CustomTexts/HeaderText";
+import TextNoNewline from "./CustomTexts/TextNoNewline";
 import SwipeableFooter from "./SwipeableFooter";
 import React, { useRef, useState, useEffect } from "react";
 import {
@@ -58,17 +57,18 @@ const Passage = ({ html_str }) => {
 
     // If clicking on a comment...
     if (verse in comments) {
+      setUnderlineIds(new Set());
       setCurrVerseComment(verse);
       setShowCommentFooter(true);
       setShowFooter(true);
       setIsReset(true);
       return;
-    } else {
-      setCurrVerseComment(null);
-      setShowCommentFooter(false);
-      setShowFooter(true);
-      hideCommentInput();
     }
+
+    setCurrVerseComment(null);
+    setShowCommentFooter(false);
+    setShowFooter(true);
+    hideCommentInput();
 
     if (scrollViewRef.current && event?.nativeEvent) {
       // Handle footer
@@ -675,11 +675,12 @@ const Passage = ({ html_str }) => {
           </TextNoNewline>
         </RegularText>
       </ScrollView>
-      {showFooter ? (
+      {showFooter && !showCommentFooter ? (
         showCommentFooterInput ? (
-          <SwipeableFooterInput
+          <SwipeableFooter
             style={{ flex: 0.5 }}
-            setShowFooter={setShowCommentFooter}
+            height={450}
+            setShowFooter={setShowFooter}
             setShowCommentFooter={setShowCommentFooter}
             setIsReset={setIsReset}
             setUnderlineIds={setUnderlineIds}
@@ -734,79 +735,94 @@ const Passage = ({ html_str }) => {
                 />
               </View>
             </View>
-          </SwipeableFooterInput>
+          </SwipeableFooter>
         ) : (
           <SwipeableFooter
             style={{ flex: 0.3 }}
-            setShowFooter={setShowCommentFooter}
+            height={130}
+            setShowFooter={setShowFooter}
             setShowCommentFooter={setShowCommentFooter}
             setIsReset={setIsReset}
             setUnderlineIds={setUnderlineIds}
             hideCommentInput={hideCommentInput}
           >
-            {showCommentFooter ? (
-              // Comment Footer
-              <View style={styles.footer}>
-                <Text style={{ color: "white" }}>Verse {currVerseComment}</Text>
-                <Text style={{ color: "white" }}>
-                  {comments[currVerseComment]}
-                </Text>
-              </View>
-            ) : (
-              // Regular Footer
-              <View style={styles.footer}>
-                <View style={styles.topHalf}>
-                  <FontAwesome5
-                    name="highlighter"
-                    size={24}
-                    color="white"
-                    style={{ marginRight: 10 }}
-                  />
-                  <View style={styles.colorContainer}>
-                    <TouchableOpacity onPress={highlightYellow}>
-                      <View style={styles.colorCircleYellow}></View>
-                    </TouchableOpacity>
-                    <View style={styles.colorCircleBlue}></View>
-                    <View style={styles.colorCircleGreen}></View>
-                    <View style={styles.colorCircleRed}></View>
-                    <TouchableOpacity onPress={highlightYellow}>
-                      <View style={styles.colorCircleYellow}></View>
-                    </TouchableOpacity>
-                    <View style={styles.colorCircleBlue}></View>
-                    <View style={styles.colorCircleGreen}></View>
-                    <View style={styles.colorCircleRed}></View>
-                  </View>
-                </View>
-                <View style={styles.bottomHalf}>
-                  <TouchableOpacity onPress={showCommentInput}>
-                    <View
-                      style={{ flexDirection: "column", alignItems: "center" }}
-                    >
-                      <SimpleLineIcons name="note" size={24} color="white" />
-                      <Text style={{ color: "white" }}>Note</Text>
-                    </View>
+            <View style={styles.footer}>
+              <View style={styles.topHalf}>
+                <FontAwesome5
+                  name="highlighter"
+                  size={24}
+                  color="white"
+                  style={{ marginRight: 10 }}
+                />
+                <View style={styles.colorContainer}>
+                  <TouchableOpacity onPress={highlightYellow}>
+                    <View style={styles.colorCircleYellow}></View>
                   </TouchableOpacity>
+                  <View style={styles.colorCircleBlue}></View>
+                  <View style={styles.colorCircleGreen}></View>
+                  <View style={styles.colorCircleRed}></View>
+                  <TouchableOpacity onPress={highlightYellow}>
+                    <View style={styles.colorCircleYellow}></View>
+                  </TouchableOpacity>
+                  <View style={styles.colorCircleBlue}></View>
+                  <View style={styles.colorCircleGreen}></View>
+                  <View style={styles.colorCircleRed}></View>
+                </View>
+              </View>
+              <View style={styles.bottomHalf}>
+                <TouchableOpacity onPress={showCommentInput}>
                   <View
                     style={{ flexDirection: "column", alignItems: "center" }}
                   >
-                    <Ionicons name="color-wand" size={24} color="white" />
-                    <Text style={{ color: "white" }}>Explain</Text>
-                  </View>
-                  <View
-                    style={{ flexDirection: "column", alignItems: "center" }}
-                  >
-                    <Ionicons
-                      name="chatbox-ellipses-outline"
+                    <SimpleLineIcons
+                      name="note"
                       size={24}
                       color="white"
+                      style={{ paddingBottom: 5 }}
                     />
-                    <Text style={{ color: "white" }}>Explain</Text>
+                    <Text style={{ color: "white" }}>Note</Text>
                   </View>
+                </TouchableOpacity>
+                <View style={{ flexDirection: "column", alignItems: "center" }}>
+                  <Ionicons
+                    name="color-wand"
+                    size={24}
+                    color="white"
+                    style={{ paddingBottom: 5 }}
+                  />
+                  <Text style={{ color: "white" }}>Explain</Text>
+                </View>
+                <View style={{ flexDirection: "column", alignItems: "center" }}>
+                  <Ionicons
+                    name="chatbox-ellipses-outline"
+                    size={24}
+                    color="white"
+                    style={{ paddingBottom: 5 }}
+                  />
+                  <Text style={{ color: "white" }}>Ask an AI</Text>
                 </View>
               </View>
-            )}
+            </View>
           </SwipeableFooter>
         )
+      ) : null}
+
+      {showCommentFooter ? (
+        // Comment Footer
+        <SwipeableFooter
+          style={{ flex: 0.3 }}
+          height={130}
+          setShowFooter={setShowFooter}
+          setShowCommentFooter={setShowCommentFooter}
+          setIsReset={setIsReset}
+          setUnderlineIds={setUnderlineIds}
+          hideCommentInput={hideCommentInput}
+        >
+          <View style={styles.footer}>
+            <Text style={{ color: "white" }}>Verse {currVerseComment}</Text>
+            <Text style={{ color: "white" }}>{comments[currVerseComment]}</Text>
+          </View>
+        </SwipeableFooter>
       ) : null}
     </View>
   );
