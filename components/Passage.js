@@ -3,16 +3,15 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  TouchableHighlight,
   StyleSheet,
-  PanResponder,
-  Animated,
   TextInput,
 } from "react-native";
 import RegularText from "./RegularText";
 import VerseText from "./VerseText";
 import HeaderText from "./HeaderText";
 import TextNoNewline from "./TextNoNewline";
+import SwipeableFooterInput from "./SwipeableFooterInput";
+import SwipeableFooter from "./SwipeableFooter";
 import React, { useRef, useState, useEffect } from "react";
 import {
   AntDesign,
@@ -149,154 +148,6 @@ const Passage = ({ html_str }) => {
   const handleTextLayout = (event) => {
     const { layout } = event.nativeEvent;
     setTextLayout(layout);
-  };
-
-  const SwipeableFooter = ({ children }) => {
-    const [isVisible, setIsVisible] = useState(true);
-    const panResponder = useRef(
-      PanResponder.create({
-        onMoveShouldSetPanResponder: (_, gestureState) => {
-          // Only activate the pan responder if the gesture is moving downwards
-          return gestureState.dy > 0;
-        },
-        onPanResponderMove: (_, gestureState) => {
-          // Update the position of the footer as the user drags it downwards
-          footerPosition.setValue(gestureState.dy);
-        },
-        onPanResponderRelease: (_, gestureState) => {
-          // If the user has dragged the footer down by more than half of its height,
-          // animate it out of view, otherwise animate it back to its original position
-          if (gestureState.dy > FOOTER_HEIGHT / 2) {
-            animateFooterOut();
-          } else {
-            animateFooterBack();
-          }
-        },
-      })
-    ).current;
-
-    const FOOTER_HEIGHT = 120; // Replace with the actual height of your footer
-    const footerPosition = useRef(new Animated.Value(0)).current;
-
-    const animateFooterOut = () => {
-      Animated.timing(footerPosition, {
-        toValue: FOOTER_HEIGHT,
-        duration: 300,
-        useNativeDriver: false,
-      }).start(() => {
-        setIsVisible(false);
-        setShowFooter(false);
-        setShowCommentFooter(false);
-        setIsReset(true);
-        setUnderlineIds(new Set());
-        hideCommentInput();
-      });
-    };
-    const animateFooterBack = () => {
-      Animated.timing(footerPosition, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: false,
-      }).start();
-    };
-
-    const footerStyle = {
-      transform: [
-        {
-          translateY: footerPosition,
-        },
-      ],
-    };
-
-    if (!isVisible) {
-      return null;
-    } else {
-      return (
-        <>
-          <Animated.View
-            style={[stylesFooter.footer, footerStyle]}
-            {...panResponder.panHandlers}
-          >
-            <View style={stylesFooter.handle} />
-            {children}
-          </Animated.View>
-        </>
-      );
-    }
-  };
-
-  const SwipeableFooterInput = ({ children }) => {
-    const [isVisible, setIsVisible] = useState(true);
-    const panResponder = useRef(
-      PanResponder.create({
-        onMoveShouldSetPanResponder: (_, gestureState) => {
-          // Only activate the pan responder if the gesture is moving downwards
-          return gestureState.dy > 0;
-        },
-        onPanResponderMove: (_, gestureState) => {
-          // Update the position of the footer as the user drags it downwards
-          footerPosition.setValue(gestureState.dy);
-        },
-        onPanResponderRelease: (_, gestureState) => {
-          // If the user has dragged the footer down by more than half of its height,
-          // animate it out of view, otherwise animate it back to its original position
-          if (gestureState.dy > FOOTER_HEIGHT / 2) {
-            animateFooterOut();
-          } else {
-            animateFooterBack();
-          }
-        },
-      })
-    ).current;
-
-    const FOOTER_HEIGHT = 450; // Replace with the actual height of your footer
-    const footerPosition = useRef(new Animated.Value(0)).current;
-
-    const animateFooterOut = () => {
-      Animated.timing(footerPosition, {
-        toValue: FOOTER_HEIGHT,
-        duration: 300,
-        useNativeDriver: false,
-      }).start(() => {
-        setIsVisible(false);
-        setShowFooter(false);
-        setShowCommentFooter(false);
-        setIsReset(true);
-        setUnderlineIds(new Set());
-        hideCommentInput();
-      });
-    };
-    const animateFooterBack = () => {
-      Animated.timing(footerPosition, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: false,
-      }).start();
-    };
-
-    const footerStyle = {
-      transform: [
-        {
-          translateY: footerPosition,
-        },
-      ],
-    };
-
-    if (!isVisible) {
-      return null;
-    } else {
-      return (
-        <>
-          <Animated.View
-            style={[stylesFooter.footerInput, footerStyle]}
-            {...panResponder.panHandlers}
-          >
-            <View style={stylesFooter.handle} />
-            {children}
-          </Animated.View>
-        </>
-      );
-    }
   };
 
   return (
@@ -826,7 +677,14 @@ const Passage = ({ html_str }) => {
       </ScrollView>
       {showFooter ? (
         showCommentFooterInput ? (
-          <SwipeableFooterInput style={{ flex: 0.5 }}>
+          <SwipeableFooterInput
+            style={{ flex: 0.5 }}
+            setShowFooter={setShowCommentFooter}
+            setShowCommentFooter={setShowCommentFooter}
+            setIsReset={setIsReset}
+            setUnderlineIds={setUnderlineIds}
+            hideCommentInput={hideCommentInput}
+          >
             <View style={{ flex: 1 }}>
               <View
                 style={{
@@ -857,7 +715,7 @@ const Passage = ({ html_str }) => {
                   backgroundColor: "#21201f",
                   margin: 20,
                   padding: 15,
-                  height: 300,
+                  height: 50,
                   borderWidth: 1,
                   borderColor: "white",
                 }}
@@ -878,7 +736,14 @@ const Passage = ({ html_str }) => {
             </View>
           </SwipeableFooterInput>
         ) : (
-          <SwipeableFooter style={{ flex: 0.3 }}>
+          <SwipeableFooter
+            style={{ flex: 0.3 }}
+            setShowFooter={setShowCommentFooter}
+            setShowCommentFooter={setShowCommentFooter}
+            setIsReset={setIsReset}
+            setUnderlineIds={setUnderlineIds}
+            hideCommentInput={hideCommentInput}
+          >
             {showCommentFooter ? (
               // Comment Footer
               <View style={styles.footer}>
@@ -947,7 +812,7 @@ const Passage = ({ html_str }) => {
   );
 };
 
-const styles = {
+const styles = StyleSheet.create({
   footer: {
     flexDirection: "column",
     paddingVertical: 10,
@@ -1007,42 +872,6 @@ const styles = {
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-  },
-};
-
-const stylesFooter = StyleSheet.create({
-  content: {
-    flex: 1,
-  },
-  footer: {
-    position: "absolute",
-    bottom: -780,
-    left: 0,
-    right: 0,
-    height: 900, // Replace with the actual height of your footer
-    backgroundColor: "#0a0a0a",
-    borderTopWidth: 1,
-    borderTopColor: "black",
-    padding: 10,
-  },
-  footerInput: {
-    position: "absolute",
-    bottom: -450,
-    left: 0,
-    right: 0,
-    height: 900, // Replace with the actual height of your footer
-    backgroundColor: "#0a0a0a",
-    borderTopWidth: 1,
-    borderTopColor: "black",
-    padding: 10,
-  },
-  handle: {
-    alignSelf: "center",
-    width: 30,
-    height: 5,
-    backgroundColor: "white",
-    borderRadius: 5,
-    marginBottom: 5,
   },
 });
 
