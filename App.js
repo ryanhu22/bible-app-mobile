@@ -1,22 +1,34 @@
-import { StyleSheet, SafeAreaView, View, Text } from "react-native";
+import {
+  StyleSheet,
+  SafeAreaView,
+  View,
+  Text,
+  TextInput,
+  Button,
+} from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import HomeScreen from "./screens/Homescreen";
+import SignInScreen from "./screens/SignInScreen";
 import Header from "./components/Header";
 import Passage from "./components/Passage";
+import React, { useRef, useState, useEffect } from "react";
 
-const genesis_1 =
-  "<h3>This is genesis 1 text This is genesis 1 text This is genesis 1 text This is genesis 1 text This is genesis 1 text This is genesis 1 text This is genesis 1 text This is genesis 1 text This is genesis 1 text This is genesis 1 text This is genesis 1 text This is genesis 1 text</h3>";
+const Stack = createNativeStackNavigator();
 
-export default function App() {
+function App() {
   return (
-    <SafeAreaView style={styles.container}>
-      <Header />
-      <Passage html_str={genesis_1} />
-    </SafeAreaView>
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false, // hide the header for all screens
+        }}
+      >
+        {/* <Stack.Screen name="SignIn" component={SignInScreen} /> */}
+        <Stack.Screen name="Home" component={HomeScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "black",
-  },
-});
+export default App;

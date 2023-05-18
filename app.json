@@ -7,6 +7,25 @@
       "ios",
       "android",
       "web"
+    ],
+    "ios": {
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "bundleIdentifier": "com.bma.biblemobileapp"
+    },
+    "android": {
+      "googleServicesFile": "./google-services.json",
+      "package": "com.bma.biblemobileapp"
+    },
+    "plugins": [
+      "@react-native-firebase/app",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
     ]
   }
 }

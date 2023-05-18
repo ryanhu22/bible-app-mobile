@@ -19,8 +19,14 @@ import {
   SimpleLineIcons,
   Ionicons,
 } from "@expo/vector-icons";
+import db from "@react-native-firebase/database";
+import auth from "@react-native-firebase/auth";
+import HTML from "react-native-render-html";
+import HTMLParser from "react-native-html-parser";
 
 const Passage = ({ html_str }) => {
+  var DomParser = require("react-native-html-parser").DOMParser;
+
   // Layout Functionalities
   const scrollViewRef = useRef(null);
   const [textLayout, setTextLayout] = useState(null);
@@ -149,6 +155,42 @@ const Passage = ({ html_str }) => {
     const { layout } = event.nativeEvent;
     setTextLayout(layout);
   };
+
+  const test = async () => {
+    await db()
+      .ref("/test/123")
+      .set({
+        name: "Ryan",
+        count: [1, 4, 1],
+      });
+    const name = await db().ref("/test/123");
+    // Attach a listener to retrieve the data when it changes
+    name.on("value", (snapshot) => {
+      const data = snapshot.val(); // This will be an object containing the data at the node
+
+      if (data) {
+        const name = data.name; // Assuming there is a "name" property in the object
+        console.log(name); // Do something with the name
+      }
+    });
+  };
+
+  const test2 = () => {
+    const html_string = `<h3 id="p01001001_01-1">The Creation of the World</h3>
+    <p id="p01001001_06-1" class="starts-chapter"><b class="chapter-num" id="v01001001-1">1:1&nbsp;</b>In the beginning, God created the heavens and the earth. <b class="verse-num" id="v01001002-1">2&nbsp;</b>The earth was without form and void, and darkness was over the face of the deep. And the Spirit of God was hovering over the face of the waters.</p>
+    <p id="p01001002_06-1"><b class="verse-num" id="v01001003-1">3&nbsp;</b>And God said, “Let there be light,” and there was light. <b class="verse-num" id="v01001004-1">4&nbsp;</b>And God saw that the light was good. And God separated the light from the darkness. <b class="verse-num" id="v01001005-1">5&nbsp;</b>God called the light Day, and the darkness he called Night. And there was evening and there was morning, the first day.</p>`;
+    let doc = new DomParser().parseFromString(html_string, "text/html");
+
+    console.log(doc);
+    // doc.map((node, index) => {
+    //   console.log(index);
+    //   console.log(node);
+    // });
+  };
+
+  const test_html = `<h3 id="p01001001_01-1">The Creation of the World</h3>
+  <p id="p01001001_06-1" class="starts-chapter"><b class="chapter-num" id="v01001001-1">1:1&nbsp;</b>In the beginning, God created the heavens and the earth. <b class="verse-num" id="v01001002-1">2&nbsp;</b>The earth was without form and void, and darkness was over the face of the deep. And the Spirit of God was hovering over the face of the waters.</p>
+  <p id="p01001002_06-1"><b class="verse-num" id="v01001003-1">3&nbsp;</b>And God said, “Let there be light,” and there was light. <b class="verse-num" id="v01001004-1">4&nbsp;</b>And God saw that the light was good. And God separated the light from the darkness. <b class="verse-num" id="v01001005-1">5&nbsp;</b>God called the light Day, and the darkness he called Night. And there was evening and there was morning, the first day.</p>`;
 
   return (
     <View style={{ flex: 1, flexDirection: "column" }}>
@@ -700,20 +742,20 @@ const Passage = ({ html_str }) => {
                   style={{ alignItems: "center" }}
                   onPress={hideCommentInput}
                 >
-                  <AntDesign name="back" size={20} color="#3ba7f5" />
-                  <Text style={{ color: "#3ba7f5" }}>Back</Text>
+                  <AntDesign name="back" size={20} color="#20c7fa" />
+                  <Text style={{ color: "#20c7fa" }}>Back</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={{ alignItems: "center" }}
                   onPress={sendComment}
                 >
-                  <Feather name="send" size={18} color="#3ba7f5" />
-                  <Text style={{ color: "#3ba7f5" }}>Post</Text>
+                  <Feather name="send" size={18} color="#20c7fa" />
+                  <Text style={{ color: "#20c7fa" }}>Post</Text>
                 </TouchableOpacity>
               </View>
               <View
                 style={{
-                  backgroundColor: "#21201f",
+                  backgroundColor: "#141414",
                   margin: 20,
                   padding: 15,
                   height: 50,
@@ -819,8 +861,18 @@ const Passage = ({ html_str }) => {
           hideCommentInput={hideCommentInput}
         >
           <View style={styles.footer}>
-            <Text style={{ color: "white" }}>Verse {currVerseComment}</Text>
-            <Text style={{ color: "white" }}>{comments[currVerseComment]}</Text>
+            <Text
+              style={{
+                color: "white",
+                fontStyle: "italic",
+                fontWeight: "bold",
+              }}
+            >
+              Verse {currVerseComment}
+            </Text>
+            <Text style={{ color: "white", marginTop: 5 }}>
+              {comments[currVerseComment]}
+            </Text>
           </View>
         </SwipeableFooter>
       ) : null}

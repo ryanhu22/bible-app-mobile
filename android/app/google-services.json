@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "328689995330",
+    "project_id": "bible-mobile-app",
+    "storage_bucket": "bible-mobile-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:328689995330:android:29cc9f81639a0d2591a7db",
+        "android_client_info": {
+          "package_name": "com.bma.biblemobileapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "328689995330-4cd0jdda2i0frt6hiaeoj4lrr7rg28mk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDWo78TqlzavGXH_Jk-FGpypsSqqT4mQk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "328689995330-4cd0jdda2i0frt6hiaeoj4lrr7rg28mk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "328689995330-aci3n10sgg975c4gpok0g2v4dknef7ha.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bma.biblemobileapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
