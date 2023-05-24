@@ -35,7 +35,8 @@ const Passage = ({ passage }) => {
   const [isReset, setIsReset] = useState(false);
 
   // Highlighting Functionalities
-  const [underlineIds, setUnderlineIds] = useState(new Set());
+  const [underlineIds, setUnderlineIds] = useState([]);
+  const [underlineIds2, setUnderlineIds2] = useState([]);
   const [yellowHighlightIds, setHighlightYellowHighlightIds] = useState(
     new Set()
   );
@@ -47,7 +48,18 @@ const Passage = ({ passage }) => {
   const [showCommentFooterInput, setShowCommentFooterInput] = useState(false);
   const [commentInput, setCommentInput] = useState("");
 
+  // Rendering page
   const [renderTags, setRenderTags] = useState([]);
+
+  console.log(underlineIds2);
+
+  const [renderCount, setRenderCount] = useState(0);
+
+  useEffect(() => {
+    console.log("Component rendered"); // Log a message when the component is rendered
+    setRenderCount((prevCount) => prevCount + 1);
+    console.log(renderCount);
+  }, []);
 
   const appendToRenderTags = async (newTag) => {
     setRenderTags((prevState) => {
@@ -55,12 +67,44 @@ const Passage = ({ passage }) => {
     });
   };
 
+  const setPassage = () => {
+    return setRenderTags(
+      <TextNoNewline
+        verse={1}
+        reset={isReset}
+        onPress={(e) => handleTextPress(e, 90)}
+        // onLayout={handleTextLayout}
+        yellowHighlightIds={yellowHighlightIds}
+        comments={comments}
+        selectedComment={currVerseComment}
+        key={50}
+      >
+        <VerseText>{" " + 1}</VerseText>
+        I'M A RENDER TAG
+      </TextNoNewline>
+    );
+  };
+
+  const test1 = (
+    <TextNoNewline
+      verse={1}
+      reset={isReset}
+      onPress={(e) => handleTextPress(e, 10)}
+      // onLayout={handleTextLayout}
+      yellowHighlightIds={yellowHighlightIds}
+      comments={comments}
+      selectedComment={currVerseComment}
+      key={1}
+    >
+      <VerseText>{" " + 1}</VerseText>
+      TEST1
+    </TextNoNewline>
+  );
+
   // Handle passage loading
-  useEffect(() => {
+  const setPassag2 = () => {
     setRenderTags([]);
     var tmpArray = [];
-    console.log("MY PASSAGE");
-    console.log(passage);
     if (!passage) {
       return;
     }
@@ -68,6 +112,7 @@ const Passage = ({ passage }) => {
     var key = 0;
     for (const sortedKey of sortedKeys) {
       var currElement = passage[sortedKey];
+      console.log("IN THIS FUNC");
       console.log(currElement);
       // If it's a header
       if (currElement?.isHeading && currElement.isHeading === "True") {
@@ -75,21 +120,20 @@ const Passage = ({ passage }) => {
           const renderTagOld = (
             <RegularText key={key}>
               {tmpArray.map((item) => {
+                const currVerseNum = item.verseNum;
                 key += 2;
                 return (
                   <TextNoNewline
-                    verse={item.verseNum}
+                    verse={currVerseNum}
                     reset={isReset}
-                    onPress={(e) => handleTextPress(e, item.verseNum)}
+                    onPress={(e) => handleTextPress(e, currVerseNum)}
                     onLayout={handleTextLayout}
                     yellowHighlightIds={yellowHighlightIds}
                     comments={comments}
                     selectedComment={currVerseComment}
-                    key={key}
+                    key={key + 1}
                   >
-                    <VerseText class="verse-num" id="v01001011-1" key={key + 1}>
-                      {" " + item.verseNum}
-                    </VerseText>
+                    <VerseText key={key}>{" " + item.verseNum}</VerseText>
                     {item.verse}
                   </TextNoNewline>
                 );
@@ -112,113 +156,136 @@ const Passage = ({ passage }) => {
           appendToRenderTags(renderTagHeader);
         }, 1000);
 
+        continue;
+
         // renderTags.push(renderTagHeader);
       } else {
         tmpArray.push(currElement);
       }
 
-      if (
-        currElement?.isEndParagraph &&
-        currElement.isEndParagraph === "True"
-      ) {
+      tmpArray.push(currElement);
+      console.log("HI");
+      if (currElement.isEndParagraph && currElement.isEndParagraph === "True") {
+        console.log("HERE?");
         // Construct
         const renderTag = (
           <RegularText key={key}>
             {tmpArray.map((item) => {
+              console.log(item.verseNum);
+
+              const currVerseNum = item.verseNum;
               key += 2;
               return (
                 <TextNoNewline
-                  verse={item.verseNum}
+                  verse={currVerseNum}
                   reset={isReset}
-                  onPress={(e) => handleTextPress(e, item.verseNum)}
-                  onLayout={handleTextLayout}
+                  onPress={(e) => handleTextPress(e, 999)}
+                  // onLayout={handleTextLayout}
                   yellowHighlightIds={yellowHighlightIds}
                   comments={comments}
                   selectedComment={currVerseComment}
-                  key={key + 1}
+                  key={key + 2}
                 >
-                  <VerseText class="verse-num" id="v01001011-1" key={key + 2}>
-                    {" " + item.verseNum}
-                  </VerseText>
+                  <VerseText key={key + 1}>{" " + currVerseNum}</VerseText>
                   {item.verse}
                 </TextNoNewline>
               );
             })}
           </RegularText>
         );
+
         key += 3;
 
         tmpArray = [];
-        setTimeout(() => {
-          appendToRenderTags(renderTag);
-        }, 1000);
+
+        setRenderTags(renderTag);
+        // appendToRenderTags(renderTag);
 
         // renderTags.push(renderTag);
       }
+      if (key > 10) {
+        break;
+      }
     }
-  }, [passage]);
+  };
 
   // Handle automatic closing of footer when no underlines
-  useEffect(() => {
-    if (underlineIds.size === 0) {
-      setShowFooter(false);
-    } else {
-      setShowFooter(true);
-    }
-  }, [underlineIds]);
+  // useEffect(() => {
+  //   console.log("here");
+  //   if (underlineIds.size === 0) {
+  //     setShowFooter(false);
+  //   } else {
+  //     setShowFooter(true);
+  //   }
+  // }, [underlineIds]);
 
   const handleTextPress = (event, verse) => {
+    console.log("underlineIds2 ======");
+    console.log(underlineIds2);
+
     if (isReset) {
       setIsReset(false);
     }
 
     // If clicking on a comment...
-    if (verse in comments) {
-      setUnderlineIds(new Set());
-      setCurrVerseComment(verse);
-      setShowCommentFooter(true);
-      setShowFooter(true);
-      setIsReset(true);
-      return;
-    }
+    // if (verse in comments) {
+    //   setUnderlineIds(new Set());
+    //   setCurrVerseComment(verse);
+    //   setShowCommentFooter(true);
+    //   setShowFooter(true);
+    //   setIsReset(true);
+    //   return;
+    // }
 
-    setCurrVerseComment(null);
-    setShowCommentFooter(false);
-    setShowFooter(true);
-    hideCommentInput();
+    // setCurrVerseComment(null);
+    // setShowCommentFooter(false);
+    // setShowFooter(true);
+    // hideCommentInput();
 
     if (scrollViewRef.current && event?.nativeEvent) {
       // Handle footer
-      if (underlineIds.has(verse)) {
+      console.log(underlineIds2.includes(verse));
+      if (numInUnderlineIds(verse)) {
         removeFromUnderlineIds(verse);
-      } else {
-        appendToUnderlineIds(verse);
-      }
-      const pageY = event.nativeEvent.pageY - 100;
 
-      // Handle scroll
-      //   console.log("ScrollViewHeight: ", scrollViewHeight);
-      //   console.log("PageY: " + pageY);
-      const scrollOffset = scrollViewHeight - pageY;
-      //   No need to scroll
-      if (scrollOffset > 100) {
-        return;
-      } else if (scrollOffset < 0) {
-        return;
+        console.log("HAS VERSE");
+        // setUnderlineIds(new Set([2]));
+      } else {
+        console.log("DOES NOT HAVE VERSE");
+        // setUnderlineIds(new Set([1]));
+
+        appendToUnderlineIds(verse);
+
+        // appendToUnderlineIds(verse);
       }
-      const scrollUp = 400 - scrollOffset; // 200 is how big of a footer you want to display.
-      //   console.log("ScrollOffset", scrollOffset);
-      //   console.log("ScrollUp", scrollUp);
-      //   console.log(scrollViewRef.current);
-      const currentOffset = scrollViewRef.current.getContentOffset?.().y || 0;
-      //   console.log("CurrentOffset", currentOffset);
-      //   console.log("???", event.nativeEvent.contentOffset.y);
-      //   console.log(currentOffset - scrollUp);
-      scrollViewRef.current.scrollTo({
-        y: currentOffset + scrollUp,
-        animated: "True",
-      });
+      //   const pageY = event.nativeEvent.pageY - 100;
+
+      //   // Handle scroll
+      //   //   console.log("ScrollViewHeight: ", scrollViewHeight);
+      //   //   console.log("PageY: " + pageY);
+      //   const scrollOffset = scrollViewHeight - pageY;
+      //   //   No need to scroll
+      //   if (scrollOffset > 100) {
+      //     return;
+      //   } else if (scrollOffset < 0) {
+      //     return;
+      //   }
+      //   const scrollUp = 400 - scrollOffset; // 200 is how big of a footer you want to display.
+      //   //   console.log("ScrollOffset", scrollOffset);
+      //   //   console.log("ScrollUp", scrollUp);
+      //   //   console.log(scrollViewRef.current);
+      //   const currentOffset = scrollViewRef.current.getContentOffset?.().y || 0;
+      //   //   console.log("CurrentOffset", currentOffset);
+      //   //   console.log("???", event.nativeEvent.contentOffset.y);
+      //   //   console.log(currentOffset - scrollUp);
+      //   scrollViewRef.current.scrollTo({
+      //     y: currentOffset + scrollUp,
+      //     animated: true,
+      //   });
+      console.log("underlineIds end =======");
+      console.log(underlineIds2);
     }
+    return;
   };
 
   const sendComment = () => {
@@ -244,14 +311,18 @@ const Passage = ({ passage }) => {
   };
 
   // Helper Functions
-  const appendToUnderlineIds = (int) => {
-    setUnderlineIds(new Set([...underlineIds, int]));
+  const numInUnderlineIds = (number) => {
+    return underlineIds2.includes(number);
   };
 
-  const removeFromUnderlineIds = (int) => {
-    const updatedSet = new Set(underlineIds);
-    updatedSet.delete(int);
-    setUnderlineIds(updatedSet);
+  const appendToUnderlineIds = (number) => {
+    setUnderlineIds2((prevUnderlineIds) => [...prevUnderlineIds, number]);
+  };
+
+  const removeFromUnderlineIds = (number) => {
+    setUnderlineIds2((prevUnderlineIds) =>
+      prevUnderlineIds.filter((id) => id !== number)
+    );
   };
 
   const showCommentInput = () => {
@@ -360,6 +431,37 @@ const Passage = ({ passage }) => {
         }}
         style={{ paddingHorizontal: 15, flex: 0.7 }}
       >
+        <TouchableOpacity onPress={setPassage}>
+          <Text style={{ color: "white" }}>TOUCH ME</Text>
+        </TouchableOpacity>
+        {test1}
+        <TextNoNewline
+          verse={1}
+          reset={isReset}
+          onPress={(e) => handleTextPress(e, 1)}
+          // onLayout={handleTextLayout}
+          yellowHighlightIds={yellowHighlightIds}
+          comments={comments}
+          selectedComment={currVerseComment}
+        >
+          <VerseText>{" " + 1}</VerseText>
+          item.verse
+        </TextNoNewline>
+        {[
+          <TextNoNewline
+            verse={1}
+            reset={isReset}
+            onPress={(e) => handleTextPress(e, 1)}
+            // onLayout={handleTextLayout}
+            yellowHighlightIds={yellowHighlightIds}
+            comments={comments}
+            selectedComment={currVerseComment}
+            key={1}
+          >
+            <VerseText>{" " + 1}</VerseText>
+            I"M IN AN ARRAY
+          </TextNoNewline>,
+        ]}
         {renderTags}
       </ScrollView>
 

@@ -3,8 +3,6 @@ import { Text, TouchableOpacity } from "react-native";
 
 const TextNoNewline = forwardRef((props, ref) => {
   const [isUnderline, setIsUnderline] = useState(false);
-  const [highlightColor, setHighlightColor] = useState(null);
-  const [textColor, setTextColor] = useState(null);
 
   const toggleUnderline = (event) => {
     setIsUnderline(!isUnderline);
@@ -15,6 +13,7 @@ const TextNoNewline = forwardRef((props, ref) => {
     setIsUnderline(false);
   }
 
+  // Handle comment
   if (props.verse in props.comments) {
     if (props.selectedComment && props.selectedComment === props.verse) {
       return (
@@ -47,9 +46,8 @@ const TextNoNewline = forwardRef((props, ref) => {
     }
   }
 
+  // Handle yellow highlight
   if (props.yellowHighlightIds?.has(props.verse)) {
-    // setHighlightColor("lightyellow");
-    // setTextColor("black");
     return (
       <Text
         {...props}
@@ -65,6 +63,7 @@ const TextNoNewline = forwardRef((props, ref) => {
     );
   }
 
+  // No syntax
   return (
     <Text
       {...props}
@@ -73,11 +72,11 @@ const TextNoNewline = forwardRef((props, ref) => {
         { color: "white" },
         isUnderline && {
           textDecorationLine: "underline",
-          backgroundColor: highlightColor ? "lightyellow" : null,
-          color: textColor ? "black" : "white",
+          backgroundColor: null,
+          color: "white",
         },
       ]}
-      onPress={toggleUnderline}
+      onPress={(e) => toggleUnderline(e)}
       onLayout={props.onLayout}
     />
   );
