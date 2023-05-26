@@ -1,11 +1,25 @@
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef, useState, useEffect } from "react";
 import { Text, TouchableOpacity } from "react-native";
 
 const TextNoNewline = forwardRef((props, ref) => {
   const [isUnderline, setIsUnderline] = useState(false);
 
+  useEffect(() => {
+    if (props.underlineIds?.includes(props.verse)) {
+      setIsUnderline(true);
+    } else {
+      setIsUnderline(false);
+    }
+  }, [props.underlineIds]);
+
   const toggleUnderline = (event) => {
-    setIsUnderline(!isUnderline);
+    if (props.underlineIds?.includes(props.verse)) {
+      setIsUnderline(false);
+    } else {
+      setIsUnderline(true);
+    }
+
+    // setIsUnderline(!isUnderline);
     props.onPress && props.onPress(event);
   };
 
@@ -52,11 +66,16 @@ const TextNoNewline = forwardRef((props, ref) => {
       <Text
         {...props}
         ref={ref}
-        style={{
-          color: "white",
-          backgroundColor: "#f2ef88",
-          color: "black",
-        }}
+        style={[
+          {
+            color: "white",
+            backgroundColor: "#f2ef88",
+            color: "black",
+          },
+          isUnderline && {
+            textDecorationLine: "underline",
+          },
+        ]}
         onPress={toggleUnderline}
         onLayout={props.onLayout}
       />

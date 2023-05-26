@@ -152,11 +152,16 @@ const bookCutoffs = {
   Revelation: 22,
 };
 
-const Header = () => {
+const Header = ({ book, chapter, search }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const handlePress = () => {
     setModalVisible(!modalVisible);
+  };
+
+  const searchAndClose = (book, chapter) => {
+    setModalVisible(false);
+    search(book.toLowerCase().replace(/\s/g, ""), chapter);
   };
 
   const BookButton = ({ bookName }) => {
@@ -168,6 +173,7 @@ const Header = () => {
     const handlePress = () => {
       setIsOpen(!isOpen);
     };
+
     return (
       <View
         style={{
@@ -218,9 +224,10 @@ const Header = () => {
               marginBottom: 8,
             }}
           >
-            {entries.map((button) => (
+            {entries.map((chp) => (
               <TouchableOpacity
-                key={button}
+                key={chp}
+                onPress={() => searchAndClose(bookName, chp)}
                 style={{
                   borderColor: "white",
                   borderWidth: 0.5,
@@ -232,7 +239,7 @@ const Header = () => {
                   height: 40,
                 }}
               >
-                <Text style={{ color: "white" }}>{button}</Text>
+                <Text style={{ color: "white" }}>{chp}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -255,7 +262,9 @@ const Header = () => {
     const windowWidth = Dimensions.get("window").width;
     const windowHeight = Dimensions.get("window").height - 100;
 
-    const [isOT, setIsOT] = useState(true);
+    const [isOT, setIsOT] = useState(
+      booksOT.some((obj) => obj.name.includes(book))
+    );
 
     return (
       <View
@@ -330,7 +339,9 @@ const Header = () => {
         >
           <MaterialCommunityIcons name="menu" size={28} color="white" />
         </TouchableOpacity>
-        <Text style={{ color: "white", fontSize: 18 }}>Genesis 1</Text>
+        <Text style={{ color: "white", fontSize: 18 }}>
+          {book} {chapter.toString()}
+        </Text>
       </View>
 
       {/* Modal Component */}

@@ -13,6 +13,7 @@ import SignInScreen from "./screens/SignInScreen";
 import Header from "./components/Header";
 import Passage from "./components/Passage";
 import React, { useRef, useState, useEffect } from "react";
+import "react-native-url-polyfill/auto";
 
 const Stack = createNativeStackNavigator();
 

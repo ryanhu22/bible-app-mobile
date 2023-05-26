@@ -5,12 +5,17 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
+  Dimensions,
 } from "react-native";
 import RegularText from "./CustomTexts/RegularText";
 import VerseText from "./CustomTexts/VerseText";
 import HeaderText from "./CustomTexts/HeaderText";
 import TextNoNewline from "./CustomTexts/TextNoNewline";
-import SwipeableFooter from "./SwipeableFooter";
+import SwipeableFooter from "./CustomFooters/SwipeableFooter";
+import TypeCommentFooter from "./CustomFooters/FooterContent/TypeCommentFooter";
+import ShowCommentFooter from "./CustomFooters/FooterContent/ShowCommentFooter";
+import SelectionFooter from "./CustomFooters/FooterContent/SelectionFooter";
+import { explain } from "../api/openai_api";
 import React, { useRef, useState, useEffect } from "react";
 import {
   AntDesign,
@@ -19,15 +24,11 @@ import {
   SimpleLineIcons,
   Ionicons,
 } from "@expo/vector-icons";
-import db from "@react-native-firebase/database";
-import auth from "@react-native-firebase/auth";
-import HTML from "react-native-render-html";
-import HTMLParser from "react-native-html-parser";
-
-import firestore from "@react-native-firebase/firestore";
 
 const Passage = ({ passage }) => {
   // Layout Functionalities
+  const screenHeight = Dimensions.get("window").height;
+  const scrollViewHeightFull = screenHeight * 0.85; // Adjust the percentage as desired
   const scrollViewRef = useRef(null);
   const [textLayout, setTextLayout] = useState(null);
   const [scrollViewHeight, setScrollViewHeight] = useState(0);
@@ -46,6 +47,17 @@ const Passage = ({ passage }) => {
   const [showCommentFooter, setShowCommentFooter] = useState(false);
   const [showCommentFooterInput, setShowCommentFooterInput] = useState(false);
   const [commentInput, setCommentInput] = useState("");
+
+  // On new page, reset everything
+  useEffect(() => {
+    setUnderlineIds([]);
+    setHighlightYellowHighlightIds(new Set());
+    setComments({});
+    setCurrVerseComment(null);
+    setShowCommentFooter(false);
+    setShowCommentFooterInput(false);
+    setCommentInput("");
+  }, [passage]);
 
   // Handle automatic closing of footer when no underlines
   useEffect(() => {
@@ -162,14 +174,17 @@ const Passage = ({ passage }) => {
   };
 
   return (
-    <View style={{ flex: 1, flexDirection: "column" }}>
+    <View style={{ flexDirection: "column" }}>
+      <TouchableOpacity onPress={() => explain("Hello")}>
+        <Text style={{ color: "white" }}>Test me!</Text>
+      </TouchableOpacity>
       <ScrollView
         ref={scrollViewRef}
         onLayout={(event) => {
           const { height } = event.nativeEvent.layout;
           setScrollViewHeight(height);
         }}
-        style={{ paddingHorizontal: 15, flex: 0.7 }}
+        style={{ paddingHorizontal: 15, height: scrollViewHeightFull }}
       >
         {/* RENDER PASSAGE HERE */}
         {passage.map((text, index) => {
@@ -188,6 +203,7 @@ const Passage = ({ passage }) => {
                     yellowHighlightIds={yellowHighlightIds}
                     comments={comments}
                     selectedComment={currVerseComment}
+                    underlineIds={underlineIds}
                     key={textNoNewline[2]}
                   >
                     <VerseText key={1000 + textNoNewline[2]}>
@@ -214,55 +230,12 @@ const Passage = ({ passage }) => {
             hideCommentInput={hideCommentInput}
             setCurrVerseComment={setCurrVerseComment}
           >
-            <View style={{ flex: 1 }}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  paddingHorizontal: 20,
-                  paddingVertical: 10,
-                }}
-              >
-                <TouchableOpacity
-                  style={{ alignItems: "center" }}
-                  onPress={hideCommentInput}
-                >
-                  <AntDesign name="back" size={20} color="#20c7fa" />
-                  <Text style={{ color: "#20c7fa" }}>Back</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={{ alignItems: "center" }}
-                  onPress={sendComment}
-                >
-                  <Feather name="send" size={18} color="#20c7fa" />
-                  <Text style={{ color: "#20c7fa" }}>Post</Text>
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  backgroundColor: "#141414",
-                  margin: 20,
-                  padding: 15,
-                  height: 50,
-                  borderWidth: 1,
-                  borderColor: "white",
-                }}
-              >
-                <TextInput
-                  style={{
-                    color: "white",
-                    fontSize: 15,
-                  }}
-                  multiline={true}
-                  autoFocus={true}
-                  placeholder="Write a comment..."
-                  placeholderTextColor={"#8d8d8d"}
-                  onChangeText={setCommentInput}
-                  value={commentInput}
-                />
-              </View>
-            </View>
+            <TypeCommentFooter
+              hideCommentInput={hideCommentInput}
+              sendComment={sendComment}
+              commentInput={commentInput}
+              setCommentInput={setCommentInput}
+            />
           </SwipeableFooter>
         ) : (
           <SwipeableFooter
@@ -275,63 +248,10 @@ const Passage = ({ passage }) => {
             hideCommentInput={hideCommentInput}
             setCurrVerseComment={setCurrVerseComment}
           >
-            <View style={styles.footer}>
-              <View style={styles.topHalf}>
-                <FontAwesome5
-                  name="highlighter"
-                  size={24}
-                  color="white"
-                  style={{ marginRight: 10 }}
-                />
-                <View style={styles.colorContainer}>
-                  <TouchableOpacity onPress={highlightYellow}>
-                    <View style={styles.colorCircleYellow}></View>
-                  </TouchableOpacity>
-                  <View style={styles.colorCircleBlue}></View>
-                  <View style={styles.colorCircleGreen}></View>
-                  <View style={styles.colorCircleRed}></View>
-                  <TouchableOpacity onPress={highlightYellow}>
-                    <View style={styles.colorCircleYellow}></View>
-                  </TouchableOpacity>
-                  <View style={styles.colorCircleBlue}></View>
-                  <View style={styles.colorCircleGreen}></View>
-                  <View style={styles.colorCircleRed}></View>
-                </View>
-              </View>
-              <View style={styles.bottomHalf}>
-                <TouchableOpacity onPress={showCommentInput}>
-                  <View
-                    style={{ flexDirection: "column", alignItems: "center" }}
-                  >
-                    <SimpleLineIcons
-                      name="note"
-                      size={24}
-                      color="white"
-                      style={{ paddingBottom: 5 }}
-                    />
-                    <Text style={{ color: "white" }}>Note</Text>
-                  </View>
-                </TouchableOpacity>
-                <View style={{ flexDirection: "column", alignItems: "center" }}>
-                  <Ionicons
-                    name="color-wand"
-                    size={24}
-                    color="white"
-                    style={{ paddingBottom: 5 }}
-                  />
-                  <Text style={{ color: "white" }}>Explain</Text>
-                </View>
-                <View style={{ flexDirection: "column", alignItems: "center" }}>
-                  <Ionicons
-                    name="chatbox-ellipses-outline"
-                    size={24}
-                    color="white"
-                    style={{ paddingBottom: 5 }}
-                  />
-                  <Text style={{ color: "white" }}>Ask an AI</Text>
-                </View>
-              </View>
-            </View>
+            <SelectionFooter
+              highlightYellow={highlightYellow}
+              showCommentInput={showCommentInput}
+            />
           </SwipeableFooter>
         )
       ) : null}
@@ -348,87 +268,14 @@ const Passage = ({ passage }) => {
           hideCommentInput={hideCommentInput}
           setCurrVerseComment={setCurrVerseComment}
         >
-          <View style={styles.footer}>
-            <Text
-              style={{
-                color: "white",
-                fontStyle: "italic",
-                fontWeight: "bold",
-              }}
-            >
-              Verse {currVerseComment}
-            </Text>
-            <Text style={{ color: "white", marginTop: 5 }}>
-              {comments[currVerseComment]}
-            </Text>
-          </View>
+          <ShowCommentFooter
+            currVerseComment={currVerseComment}
+            comments={comments}
+          />
         </SwipeableFooter>
       ) : null}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  footer: {
-    flexDirection: "column",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-  },
-  topHalf: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  iconContainer: {
-    backgroundColor: "#c3c3c3",
-    borderRadius: 5,
-    padding: 5,
-    marginRight: 10,
-  },
-  colorContainer: {
-    flexDirection: "row",
-  },
-  colorCircleYellow: {
-    backgroundColor: "#f2ef88",
-    borderColor: "black",
-    borderWidth: 1,
-    width: 30,
-    height: 30,
-    borderRadius: 30,
-    marginRight: 10,
-  },
-  colorCircleBlue: {
-    backgroundColor: "#3ba3ff",
-    borderColor: "black",
-    borderWidth: 1,
-    width: 30,
-    height: 30,
-    borderRadius: 30,
-    marginRight: 10,
-  },
-  colorCircleGreen: {
-    backgroundColor: "#23fc81",
-    borderColor: "black",
-    borderWidth: 1,
-    width: 30,
-    height: 30,
-    borderRadius: 30,
-    marginRight: 10,
-  },
-  colorCircleRed: {
-    backgroundColor: "#ff4d6a",
-    borderColor: "black",
-    borderWidth: 1,
-    width: 30,
-    height: 30,
-    borderRadius: 30,
-    marginRight: 10,
-  },
-  bottomHalf: {
-    marginTop: 20,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-  },
-});
 
 export default Passage;
