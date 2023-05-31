@@ -18,27 +18,19 @@ import React, { useRef, useState, useEffect } from "react";
 
 // TODO:
 // 1. Add a "history", where you can swipe or click button to check out previous histories
-const ExplainFooter = ({
-  book,
-  chapter,
-  underlineIds,
-  commentInput,
-  setCommentInput,
-  sendCustomComment,
-  hideExplain,
-}) => {
+const SummarizeFooter = ({ book, chapter, hideSummarize }) => {
   const [explainText, setExplainText] = useState("");
   const [nextQuestion, setNextQuestion] = useState("");
   const [currentQuestion, setCurrentQuestion] = useState("");
 
   useEffect(() => {
-    const question = `I'm reading the book of ${book}, chapter ${chapter}. Can you help me give me a SHORT explanation of verses ${underlineIds}? No need to cite back the verses`;
+    const question = `I'm reading the book of ${book}, Chapter ${chapter}. Give me a short summary?`;
     explain(question);
   }, []);
 
   const explain = async (question) => {
     // const response = await explainAPI(question);
-    const response = `This is a mock response for AI Footer. Your question was ${question}`;
+    const response = "This is a mock response for the summarize footer";
     setExplainText(response);
   };
 
@@ -47,10 +39,6 @@ const ExplainFooter = ({
     setExplainText("");
     setCurrentQuestion(nextQuestion);
     await explain("I have a follow-up question: " + nextQuestion);
-  };
-
-  const addComment = () => {
-    sendCustomComment(explainText);
   };
 
   return (
@@ -66,32 +54,22 @@ const ExplainFooter = ({
       >
         <TouchableOpacity
           style={{ alignItems: "center" }}
-          onPress={hideExplain}
+          onPress={hideSummarize}
         >
-          <AntDesign name="back" size={20} color="#20c7fa" />
-          <Text style={{ color: "#20c7fa" }}>Back</Text>
+          <Text style={{ color: "#20c7fa", textDecorationLine: "underline" }}>
+            Close
+          </Text>
         </TouchableOpacity>
         <View>
-          {currentQuestion ? (
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={{ color: "white", paddingHorizontal: 5 }}
-            >
-              {currentQuestion}
-            </Text>
-          ) : (
-            <Text style={{ color: "white" }}>
-              Explanation of verses:{" "}
-              {underlineIds.map((verseNum, index) => {
-                return (
-                  <Text key={index} style={{ color: "white" }}>
-                    <Text style={{ fontWeight: "bold" }}>{verseNum}</Text>,{" "}
-                  </Text>
-                );
-              })}
-            </Text>
-          )}
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={{ color: "white", paddingHorizontal: 5 }}
+          >
+            {currentQuestion
+              ? currentQuestion
+              : "Summary of " + book + " " + chapter}
+          </Text>
         </View>
         <View></View>
       </View>
@@ -121,21 +99,6 @@ const ExplainFooter = ({
                 {explainText}
               </Text>
             </ScrollView>
-
-            <TouchableOpacity onPress={addComment}>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <SimpleLineIcons
-                  name="note"
-                  size={24}
-                  color="white"
-                  style={{ paddingBottom: 5 }}
-                />
-                <Text style={{ color: "white" }}>
-                  {" "}
-                  Add explanation as a note
-                </Text>
-              </View>
-            </TouchableOpacity>
           </View>
         </View>
       ) : (
@@ -163,7 +126,6 @@ const ExplainFooter = ({
           />
         </View>
       )}
-
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <View
           style={{
@@ -201,4 +163,4 @@ const ExplainFooter = ({
   );
 };
 
-export default ExplainFooter;
+export default SummarizeFooter;

@@ -18,23 +18,16 @@ import React, { useRef, useState, useEffect } from "react";
 
 // TODO:
 // 1. Add a "history", where you can swipe or click button to check out previous histories
-const ExplainFooter = ({
+const AskAIFooter = ({
   book,
   chapter,
   underlineIds,
-  commentInput,
-  setCommentInput,
   sendCustomComment,
-  hideExplain,
+  hideAI,
 }) => {
-  const [explainText, setExplainText] = useState("");
+  const [explainText, setExplainText] = useState("What can I help answer?");
   const [nextQuestion, setNextQuestion] = useState("");
   const [currentQuestion, setCurrentQuestion] = useState("");
-
-  useEffect(() => {
-    const question = `I'm reading the book of ${book}, chapter ${chapter}. Can you help me give me a SHORT explanation of verses ${underlineIds}? No need to cite back the verses`;
-    explain(question);
-  }, []);
 
   const explain = async (question) => {
     // const response = await explainAPI(question);
@@ -46,7 +39,9 @@ const ExplainFooter = ({
     setNextQuestion("");
     setExplainText("");
     setCurrentQuestion(nextQuestion);
-    await explain("I have a follow-up question: " + nextQuestion);
+    await explain(
+      `I'm currently reading ${book}, chapter ${chapter} and I have the current verses highlighted: ${underlineIds}. My question is: ${nextQuestion}`
+    );
   };
 
   const addComment = () => {
@@ -64,10 +59,7 @@ const ExplainFooter = ({
           paddingVertical: 10,
         }}
       >
-        <TouchableOpacity
-          style={{ alignItems: "center" }}
-          onPress={hideExplain}
-        >
+        <TouchableOpacity style={{ alignItems: "center" }} onPress={hideAI}>
           <AntDesign name="back" size={20} color="#20c7fa" />
           <Text style={{ color: "#20c7fa" }}>Back</Text>
         </TouchableOpacity>
@@ -78,11 +70,11 @@ const ExplainFooter = ({
               ellipsizeMode="tail"
               style={{ color: "white", paddingHorizontal: 5 }}
             >
-              {currentQuestion}
+              {`Verses ${underlineIds}: ${currentQuestion}`}
             </Text>
           ) : (
             <Text style={{ color: "white" }}>
-              Explanation of verses:{" "}
+              Selected verses:{" "}
               {underlineIds.map((verseNum, index) => {
                 return (
                   <Text key={index} style={{ color: "white" }}>
@@ -121,21 +113,22 @@ const ExplainFooter = ({
                 {explainText}
               </Text>
             </ScrollView>
-
-            <TouchableOpacity onPress={addComment}>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <SimpleLineIcons
-                  name="note"
-                  size={24}
-                  color="white"
-                  style={{ paddingBottom: 5 }}
-                />
-                <Text style={{ color: "white" }}>
-                  {" "}
-                  Add explanation as a note
-                </Text>
-              </View>
-            </TouchableOpacity>
+            {currentQuestion ? (
+              <TouchableOpacity onPress={addComment}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <SimpleLineIcons
+                    name="note"
+                    size={24}
+                    color="white"
+                    style={{ paddingBottom: 5 }}
+                  />
+                  <Text style={{ color: "white" }}>
+                    {" "}
+                    Add explanation as a note
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ) : null}
           </View>
         </View>
       ) : (
@@ -201,4 +194,4 @@ const ExplainFooter = ({
   );
 };
 
-export default ExplainFooter;
+export default AskAIFooter;

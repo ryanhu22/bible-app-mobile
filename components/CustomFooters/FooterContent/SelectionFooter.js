@@ -21,6 +21,7 @@ const SelectionFooter = ({
   highlightYellow,
   showCommentInput,
   showExplain,
+  showAI,
 }) => {
   return (
     <View style={styles.footer}>
@@ -87,15 +88,17 @@ const SelectionFooter = ({
             <Text style={{ color: "white" }}>Explain</Text>
           </View>
         </TouchableOpacity>
-        <View style={{ flexDirection: "column", alignItems: "center" }}>
-          <Ionicons
-            name="chatbox-ellipses-outline"
-            size={24}
-            color="white"
-            style={{ paddingBottom: 5 }}
-          />
-          <Text style={{ color: "white" }}>Ask an AI</Text>
-        </View>
+        <TouchableOpacity onPress={showAI}>
+          <View style={{ flexDirection: "column", alignItems: "center" }}>
+            <Ionicons
+              name="chatbox-ellipses-outline"
+              size={24}
+              color="white"
+              style={{ paddingBottom: 5 }}
+            />
+            <Text style={{ color: "white" }}>Ask an AI</Text>
+          </View>
+        </TouchableOpacity>
       </View>
     </View>
   );

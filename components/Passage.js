@@ -16,6 +16,9 @@ import TypeCommentFooter from "./CustomFooters/FooterContent/TypeCommentFooter";
 import ShowCommentFooter from "./CustomFooters/FooterContent/ShowCommentFooter";
 import SelectionFooter from "./CustomFooters/FooterContent/SelectionFooter";
 import ExplainFooter from "./CustomFooters/FooterContent/ExplainFooter";
+import AskAIFooter from "./CustomFooters/FooterContent/AskAIFooter";
+import SummarizeFooter from "./CustomFooters/FooterContent/SummarizeFooter";
+
 import { explainAPI } from "../api/openai_api";
 import React, { useRef, useState, useEffect } from "react";
 import {
@@ -26,7 +29,7 @@ import {
   Ionicons,
 } from "@expo/vector-icons";
 
-const Passage = ({ book, chapter, passage }) => {
+const Passage = ({ book, bookFormatted, chapter, passage }) => {
   // Layout Functionalities
   const screenHeight = Dimensions.get("window").height;
   const scrollViewHeightFull = screenHeight * 0.85; // Adjust the percentage as desired
@@ -49,8 +52,10 @@ const Passage = ({ book, chapter, passage }) => {
   const [showCommentFooterInput, setShowCommentFooterInput] = useState(false);
   const [commentInput, setCommentInput] = useState("");
 
-  // Explain Functionalities
+  // AI Functionalities
   const [showExplainFooter, setShowExplainFooter] = useState(false);
+  const [showAIFooter, setShowAIFooter] = useState(false);
+  const [showSummarizeFooter, setShowSummarizeFooter] = useState(false);
 
   // On new page, reset everything
   useEffect(() => {
@@ -192,6 +197,24 @@ const Passage = ({ book, chapter, passage }) => {
     setShowExplainFooter(false);
   };
 
+  const showAI = () => {
+    setShowAIFooter(true);
+  };
+
+  const hideAI = () => {
+    setShowAIFooter(false);
+  };
+
+  const showSummarize = () => {
+    setShowFooter(true);
+    setShowSummarizeFooter(true);
+  };
+
+  const hideSummarize = () => {
+    setShowFooter(false);
+    setShowSummarizeFooter(false);
+  };
+
   const handleTextLayout = (event) => {
     const { layout } = event.nativeEvent;
     setTextLayout(layout);
@@ -246,7 +269,7 @@ const Passage = ({ book, chapter, passage }) => {
             alignItems: "center",
           }}
         >
-          <TouchableOpacity>
+          <TouchableOpacity onPress={showSummarize}>
             <View
               style={{
                 backgroundColor: "transparent",
@@ -289,6 +312,8 @@ const Passage = ({ book, chapter, passage }) => {
             hideCommentInput={hideCommentInput}
             setCurrVerseComment={setCurrVerseComment}
             hideExplain={hideExplain}
+            hideSummarize={hideSummarize}
+            hideAI={hideAI}
           >
             <TypeCommentFooter
               underlineIds={underlineIds}
@@ -309,9 +334,11 @@ const Passage = ({ book, chapter, passage }) => {
             hideCommentInput={hideCommentInput}
             setCurrVerseComment={setCurrVerseComment}
             hideExplain={hideExplain}
+            hideSummarize={hideSummarize}
+            hideAI={hideAI}
           >
             <ExplainFooter
-              book={book}
+              book={bookFormatted}
               chapter={chapter}
               underlineIds={underlineIds}
               hideCommentInput={hideCommentInput}
@@ -319,6 +346,56 @@ const Passage = ({ book, chapter, passage }) => {
               commentInput={commentInput}
               setCommentInput={setCommentInput}
               hideExplain={hideExplain}
+            />
+          </SwipeableFooter>
+        ) : showAIFooter ? (
+          <SwipeableFooter
+            style={{ flex: 0.5 }}
+            height={450}
+            setShowFooter={setShowFooter}
+            setShowCommentFooter={setShowCommentFooter}
+            setIsReset={setIsReset}
+            setUnderlineIds={setUnderlineIds}
+            hideCommentInput={hideCommentInput}
+            setCurrVerseComment={setCurrVerseComment}
+            hideExplain={hideExplain}
+            hideSummarize={hideSummarize}
+            hideAI={hideAI}
+          >
+            <AskAIFooter
+              book={bookFormatted}
+              chapter={chapter}
+              underlineIds={underlineIds}
+              hideCommentInput={hideCommentInput}
+              sendCustomComment={sendCustomComment}
+              commentInput={commentInput}
+              setCommentInput={setCommentInput}
+              hideAI={hideAI}
+            />
+          </SwipeableFooter>
+        ) : showSummarizeFooter ? (
+          <SwipeableFooter
+            style={{ flex: 0.5 }}
+            height={450}
+            setShowFooter={setShowFooter}
+            setShowCommentFooter={setShowCommentFooter}
+            setIsReset={setIsReset}
+            setUnderlineIds={setUnderlineIds}
+            hideCommentInput={hideCommentInput}
+            setCurrVerseComment={setCurrVerseComment}
+            hideExplain={hideExplain}
+            hideSummarize={hideSummarize}
+            hideAI={hideAI}
+          >
+            <SummarizeFooter
+              book={bookFormatted}
+              chapter={chapter}
+              underlineIds={underlineIds}
+              hideCommentInput={hideCommentInput}
+              sendCustomComment={sendCustomComment}
+              commentInput={commentInput}
+              setCommentInput={setCommentInput}
+              hideSummarize={hideSummarize}
             />
           </SwipeableFooter>
         ) : (
@@ -332,10 +409,13 @@ const Passage = ({ book, chapter, passage }) => {
             hideCommentInput={hideCommentInput}
             setCurrVerseComment={setCurrVerseComment}
             hideExplain={hideExplain}
+            hideSummarize={hideSummarize}
+            hideAI={hideAI}
           >
             <SelectionFooter
               underlineIds={underlineIds}
               showExplain={showExplain}
+              showAI={showAI}
               highlightYellow={highlightYellow}
               showCommentInput={showCommentInput}
             />
@@ -355,6 +435,8 @@ const Passage = ({ book, chapter, passage }) => {
           hideCommentInput={hideCommentInput}
           setCurrVerseComment={setCurrVerseComment}
           hideExplain={hideExplain}
+          hideSummarize={hideSummarize}
+          hideAI={hideAI}
         >
           <ShowCommentFooter
             currVerseComment={currVerseComment}

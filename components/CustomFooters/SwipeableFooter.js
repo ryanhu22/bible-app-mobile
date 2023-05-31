@@ -12,6 +12,8 @@ const SwipeableFooter = ({
   hideCommentInput,
   setCurrVerseComment,
   hideExplain,
+  hideSummarize,
+  hideAI,
 }) => {
   const [isVisible, setIsVisible] = useState(true);
   const panResponder = useRef(
@@ -52,6 +54,8 @@ const SwipeableFooter = ({
       setUnderlineIds([]);
       hideCommentInput();
       hideExplain();
+      hideSummarize();
+      hideAI();
       setCurrVerseComment(null);
     });
   };
