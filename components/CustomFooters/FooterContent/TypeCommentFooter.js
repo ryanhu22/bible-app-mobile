@@ -3,6 +3,7 @@ import { AntDesign, Feather } from "@expo/vector-icons";
 import React from "react";
 
 const TypeCommentFooter = ({
+  underlineIds,
   hideCommentInput,
   sendComment,
   commentInput,
@@ -33,6 +34,25 @@ const TypeCommentFooter = ({
           <Feather name="send" size={18} color="#20c7fa" />
           <Text style={{ color: "#20c7fa" }}>Post</Text>
         </TouchableOpacity>
+      </View>
+      <View
+        style={{
+          paddingVertical: 20,
+          paddingHorizontal: 20,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text style={{ color: "white" }}>
+          Add a comment to verses:{" "}
+          {underlineIds.map((verseNum, index) => {
+            return (
+              <Text key={index} style={{ color: "white" }}>
+                <Text style={{ fontWeight: "bold" }}>{verseNum}</Text>,{" "}
+              </Text>
+            );
+          })}
+        </Text>
       </View>
       <View
         style={{

@@ -184,15 +184,21 @@ const Header = ({ book, chapter, search }) => {
       >
         <TouchableOpacity onPress={handlePress}>
           <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
           >
             <Text
-              style={{
-                color: "#fff",
-                fontSize: 16,
-                marginBottom: 3,
-                paddingLeft: 6,
-              }}
+              style={[
+                {
+                  color: "#fff",
+                  fontSize: 16,
+                  marginBottom: 3,
+                  paddingLeft: 6,
+                },
+                book === bookName && { color: "#bfbfbf" },
+              ]}
             >
               {bookName}
             </Text>
@@ -200,14 +206,14 @@ const Header = ({ book, chapter, search }) => {
               <AntDesign
                 name="up"
                 size={16}
-                color="white"
+                color={book === bookName ? "#bfbfbf" : "white"}
                 style={{ paddingRight: 6 }}
               />
             ) : (
               <AntDesign
                 name="down"
                 size={16}
-                color="white"
+                color={book === bookName ? "#bfbfbf" : "white"}
                 style={{ paddingRight: 6 }}
               />
             )}
@@ -228,18 +234,30 @@ const Header = ({ book, chapter, search }) => {
               <TouchableOpacity
                 key={chp}
                 onPress={() => searchAndClose(bookName, chp)}
-                style={{
-                  borderColor: "white",
-                  borderWidth: 0.5,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "16%",
-                  margin: 7,
-                  borderRadius: 10,
-                  height: 40,
-                }}
+                style={[
+                  {
+                    borderColor: "white",
+                    borderWidth: 0.5,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "16%",
+                    margin: 7,
+                    borderRadius: 10,
+                    height: 40,
+                  },
+                  book === bookName &&
+                    chapter === chp && { borderColor: "#bfbfbf" },
+                ]}
               >
-                <Text style={{ color: "white" }}>{chp}</Text>
+                <Text
+                  style={[
+                    { color: "white" },
+                    book === bookName &&
+                      chapter === chp && { color: "#bfbfbf" },
+                  ]}
+                >
+                  {chp}
+                </Text>
               </TouchableOpacity>
             ))}
           </View>

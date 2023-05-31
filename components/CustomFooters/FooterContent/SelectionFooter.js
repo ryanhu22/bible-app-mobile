@@ -16,9 +16,32 @@ import {
   Ionicons,
 } from "@expo/vector-icons";
 
-const SelectionFooter = ({ highlightYellow, showCommentInput }) => {
+const SelectionFooter = ({
+  underlineIds,
+  highlightYellow,
+  showCommentInput,
+  showExplain,
+}) => {
   return (
     <View style={styles.footer}>
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          paddingBottom: 20,
+        }}
+      >
+        <Text style={{ color: "white" }}>
+          Selected verses:{" "}
+          {underlineIds.map((verseNum, index) => {
+            return (
+              <Text key={index} style={{ color: "white" }}>
+                <Text style={{ fontWeight: "bold" }}>{verseNum}</Text>,{" "}
+              </Text>
+            );
+          })}
+        </Text>
+      </View>
       <View style={styles.topHalf}>
         <FontAwesome5
           name="highlighter"
@@ -53,15 +76,17 @@ const SelectionFooter = ({ highlightYellow, showCommentInput }) => {
             <Text style={{ color: "white" }}>Note</Text>
           </View>
         </TouchableOpacity>
-        <View style={{ flexDirection: "column", alignItems: "center" }}>
-          <Ionicons
-            name="color-wand"
-            size={24}
-            color="white"
-            style={{ paddingBottom: 5 }}
-          />
-          <Text style={{ color: "white" }}>Explain</Text>
-        </View>
+        <TouchableOpacity onPress={showExplain}>
+          <View style={{ flexDirection: "column", alignItems: "center" }}>
+            <Ionicons
+              name="color-wand"
+              size={24}
+              color="white"
+              style={{ paddingBottom: 5 }}
+            />
+            <Text style={{ color: "white" }}>Explain</Text>
+          </View>
+        </TouchableOpacity>
         <View style={{ flexDirection: "column", alignItems: "center" }}>
           <Ionicons
             name="chatbox-ellipses-outline"

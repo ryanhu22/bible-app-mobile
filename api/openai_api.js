@@ -5,7 +5,7 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-export const explain = async (question) => {
+export const explainAPI = async (question) => {
   console.log("Hitting explain v2");
   if (!configuration.apiKey) {
     console.error(
@@ -34,7 +34,7 @@ export const explain = async (question) => {
       ],
     });
     console.log(completion.data.choices[0].message.content);
-    return;
+    return completion.data.choices[0].message.content;
   } catch (error) {
     // Consider adjusting the error handling logic for your use case
     if (error.response) {

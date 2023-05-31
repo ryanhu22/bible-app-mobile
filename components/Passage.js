@@ -15,7 +15,8 @@ import SwipeableFooter from "./CustomFooters/SwipeableFooter";
 import TypeCommentFooter from "./CustomFooters/FooterContent/TypeCommentFooter";
 import ShowCommentFooter from "./CustomFooters/FooterContent/ShowCommentFooter";
 import SelectionFooter from "./CustomFooters/FooterContent/SelectionFooter";
-import { explain } from "../api/openai_api";
+import ExplainFooter from "./CustomFooters/FooterContent/ExplainFooter";
+import { explainAPI } from "../api/openai_api";
 import React, { useRef, useState, useEffect } from "react";
 import {
   AntDesign,
@@ -25,7 +26,7 @@ import {
   Ionicons,
 } from "@expo/vector-icons";
 
-const Passage = ({ passage }) => {
+const Passage = ({ book, chapter, passage }) => {
   // Layout Functionalities
   const screenHeight = Dimensions.get("window").height;
   const scrollViewHeightFull = screenHeight * 0.85; // Adjust the percentage as desired
@@ -47,6 +48,9 @@ const Passage = ({ passage }) => {
   const [showCommentFooter, setShowCommentFooter] = useState(false);
   const [showCommentFooterInput, setShowCommentFooterInput] = useState(false);
   const [commentInput, setCommentInput] = useState("");
+
+  // Explain Functionalities
+  const [showExplainFooter, setShowExplainFooter] = useState(false);
 
   // On new page, reset everything
   useEffect(() => {
@@ -87,6 +91,7 @@ const Passage = ({ passage }) => {
     setShowCommentFooter(false);
     setShowFooter(true);
     hideCommentInput();
+    hideExplain();
 
     if (scrollViewRef.current && event?.nativeEvent) {
       // Handle footer
@@ -137,6 +142,17 @@ const Passage = ({ passage }) => {
     hideCommentInput();
   };
 
+  const sendCustomComment = (customComment) => {
+    const updatedComments = { ...comments };
+    for (const verse of underlineIds) {
+      updatedComments[verse] = customComment;
+    }
+    setUnderlineIds([]);
+    setComments(updatedComments);
+    setCommentInput("");
+    hideCommentInput();
+  };
+
   const highlightYellow = () => {
     underlineIds.forEach((verse) => {
       yellowHighlightIds.add(verse);
@@ -168,6 +184,14 @@ const Passage = ({ passage }) => {
     setShowCommentFooterInput(false);
   };
 
+  const showExplain = () => {
+    setShowExplainFooter(true);
+  };
+
+  const hideExplain = () => {
+    setShowExplainFooter(false);
+  };
+
   const handleTextLayout = (event) => {
     const { layout } = event.nativeEvent;
     setTextLayout(layout);
@@ -175,9 +199,6 @@ const Passage = ({ passage }) => {
 
   return (
     <View style={{ flexDirection: "column" }}>
-      <TouchableOpacity onPress={() => explain("Hello")}>
-        <Text style={{ color: "white" }}>Test me!</Text>
-      </TouchableOpacity>
       <ScrollView
         ref={scrollViewRef}
         onLayout={(event) => {
@@ -216,6 +237,44 @@ const Passage = ({ passage }) => {
             </RegularText>
           );
         })}
+        <View
+          style={{
+            flex: 1,
+            marginTop: 20,
+            marginBottom: 20,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <TouchableOpacity>
+            <View
+              style={{
+                backgroundColor: "transparent",
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: "white",
+                padding: 8,
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Ionicons
+                name="color-wand"
+                size={24}
+                color="white"
+                style={{ paddingBottom: 5 }}
+              />
+              <Text
+                style={{
+                  color: "white",
+                  marginLeft: 10,
+                }}
+              >
+                Summarize Chapter
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
 
       {showFooter && !showCommentFooter ? (
@@ -229,26 +288,54 @@ const Passage = ({ passage }) => {
             setUnderlineIds={setUnderlineIds}
             hideCommentInput={hideCommentInput}
             setCurrVerseComment={setCurrVerseComment}
+            hideExplain={hideExplain}
           >
             <TypeCommentFooter
+              underlineIds={underlineIds}
               hideCommentInput={hideCommentInput}
               sendComment={sendComment}
               commentInput={commentInput}
               setCommentInput={setCommentInput}
             />
           </SwipeableFooter>
-        ) : (
+        ) : showExplainFooter ? (
           <SwipeableFooter
-            style={{ flex: 0.3 }}
-            height={130}
+            style={{ flex: 0.5 }}
+            height={450}
             setShowFooter={setShowFooter}
             setShowCommentFooter={setShowCommentFooter}
             setIsReset={setIsReset}
             setUnderlineIds={setUnderlineIds}
             hideCommentInput={hideCommentInput}
             setCurrVerseComment={setCurrVerseComment}
+            hideExplain={hideExplain}
+          >
+            <ExplainFooter
+              book={book}
+              chapter={chapter}
+              underlineIds={underlineIds}
+              hideCommentInput={hideCommentInput}
+              sendCustomComment={sendCustomComment}
+              commentInput={commentInput}
+              setCommentInput={setCommentInput}
+              hideExplain={hideExplain}
+            />
+          </SwipeableFooter>
+        ) : (
+          <SwipeableFooter
+            style={{ flex: 0.3 }}
+            height={170}
+            setShowFooter={setShowFooter}
+            setShowCommentFooter={setShowCommentFooter}
+            setIsReset={setIsReset}
+            setUnderlineIds={setUnderlineIds}
+            hideCommentInput={hideCommentInput}
+            setCurrVerseComment={setCurrVerseComment}
+            hideExplain={hideExplain}
           >
             <SelectionFooter
+              underlineIds={underlineIds}
+              showExplain={showExplain}
               highlightYellow={highlightYellow}
               showCommentInput={showCommentInput}
             />
@@ -260,13 +347,14 @@ const Passage = ({ passage }) => {
         // Comment Footer
         <SwipeableFooter
           style={{ flex: 0.3 }}
-          height={130}
+          height={250}
           setShowFooter={setShowFooter}
           setShowCommentFooter={setShowCommentFooter}
           setIsReset={setIsReset}
           setUnderlineIds={setUnderlineIds}
           hideCommentInput={hideCommentInput}
           setCurrVerseComment={setCurrVerseComment}
+          hideExplain={hideExplain}
         >
           <ShowCommentFooter
             currVerseComment={currVerseComment}

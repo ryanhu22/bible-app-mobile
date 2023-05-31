@@ -447,7 +447,7 @@ const HomeScreen = () => {
           renderLeftActions={renderLeftActions}
         >
           <View>
-            <Passage passage={passage} />
+            <Passage book={book} chapter={chapter} passage={passage} />
           </View>
         </Swipeable>
       </View>
