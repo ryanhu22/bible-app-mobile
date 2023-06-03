@@ -8,8 +8,18 @@ import {
   Dimensions,
   ScrollView,
   StyleSheet,
+  Pressable,
+  Button,
+  TouchableWithoutFeedback,
 } from "react-native";
-import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
+import {
+  MaterialCommunityIcons,
+  AntDesign,
+  Feather,
+  FontAwesome,
+  Ionicons,
+  Entypo,
+} from "@expo/vector-icons";
 
 const booksOT = [
   { id: "gen", name: "Genesis" },
@@ -153,14 +163,36 @@ const bookCutoffs = {
 };
 
 const Header = ({ book, chapter, search }) => {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [isBookmark, setIsBookmark] = useState(false);
+  const [profileModalVisible, setProfileModalVisible] = useState(false);
+  const [bibleModalVisible, setBibleModalVisible] = useState(false);
 
-  const handlePress = () => {
-    setModalVisible(!modalVisible);
+  const openProfileModal = () => {
+    setProfileModalVisible(true);
+  };
+
+  const closeProfileModal = () => {
+    setProfileModalVisible(false);
+  };
+
+  const openBibleModal = () => {
+    setBibleModalVisible(true);
+  };
+
+  const closeBibleModal = () => {
+    setBibleModalVisible(false);
+  };
+
+  const bookmark = () => {
+    setIsBookmark(true);
+  };
+
+  const unbookmark = () => {
+    setIsBookmark(false);
   };
 
   const searchAndClose = (book, chapter) => {
-    setModalVisible(false);
+    setBibleModalVisible(false);
     search(book.toLowerCase().replace(/\s/g, ""), chapter);
   };
 
@@ -276,6 +308,51 @@ const Header = ({ book, chapter, search }) => {
     );
   };
 
+  const Footer = ({ isOT, setIsOT }) => {
+    return (
+      <View style={{ height: 70, marginTop: 10 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            borderRadius: 5,
+            padding: 10,
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => setIsOT(true)}
+            style={{ flex: 1, alignItems: "center" }}
+          >
+            <Text
+              style={{
+                color: isOT ? "white" : "gray",
+                fontWeight: "bold",
+                textDecorationLine: isOT ? "underline" : "none",
+              }}
+            >
+              Old Testament
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setIsOT(false)}
+            style={{ flex: 1, alignItems: "center" }}
+          >
+            <Text
+              style={{
+                color: !isOT ? "white" : "gray",
+                fontWeight: "bold",
+                textDecorationLine: !isOT ? "underline" : "none",
+              }}
+            >
+              New Testament
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
+
   const BibleGrid = () => {
     const windowWidth = Dimensions.get("window").width;
     const windowHeight = Dimensions.get("window").height - 100;
@@ -295,78 +372,17 @@ const Header = ({ book, chapter, search }) => {
           {isOT ? <Section books={booksOT} /> : <Section books={booksNT} />}
         </ScrollView>
 
-        {/* Footer */}
-        <View style={{ height: 70, marginTop: 10 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              borderRadius: 5,
-              padding: 10,
-            }}
-          >
-            <TouchableOpacity
-              onPress={() => setIsOT(true)}
-              style={{ flex: 1, alignItems: "center" }}
-            >
-              <Text
-                style={{
-                  color: isOT ? "white" : "gray",
-                  fontWeight: "bold",
-                  textDecorationLine: isOT ? "underline" : "none",
-                }}
-              >
-                Old Testament
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => setIsOT(false)}
-              style={{ flex: 1, alignItems: "center" }}
-            >
-              <Text
-                style={{
-                  color: !isOT ? "white" : "gray",
-                  fontWeight: "bold",
-                  textDecorationLine: !isOT ? "underline" : "none",
-                }}
-              >
-                New Testament
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        <Footer isOT={isOT} setIsOT={setIsOT} />
       </View>
     );
   };
 
-  return (
-    <View style={{}}>
-      {/* Header Banner */}
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-          height: 50,
-        }}
-      >
-        <TouchableOpacity
-          onPress={handlePress}
-          style={{ color: "white", position: "absolute", left: 15 }}
-        >
-          <MaterialCommunityIcons name="menu" size={28} color="white" />
-        </TouchableOpacity>
-        <Text style={{ color: "white", fontSize: 18 }}>
-          {book} {chapter.toString()}
-        </Text>
-      </View>
-
-      {/* Modal Component */}
+  const BibleModal = ({ bibleModalVisible, closeBibleModal }) => {
+    return (
       <Modal
         animationType="slide"
-        visible={modalVisible}
-        onRequestClose={handlePress}
+        visible={bibleModalVisible}
+        onRequestClose={closeBibleModal}
         transparent={false}
       >
         <SafeAreaView style={{ backgroundColor: "black" }}>
@@ -380,7 +396,7 @@ const Header = ({ book, chapter, search }) => {
             }}
           >
             <TouchableOpacity
-              onPress={handlePress}
+              onPress={closeBibleModal}
               style={{ position: "absolute", left: 15 }}
             >
               <Text style={{ color: "white", textDecorationLine: "underline" }}>
@@ -395,6 +411,191 @@ const Header = ({ book, chapter, search }) => {
           </View>
         </SafeAreaView>
       </Modal>
+    );
+  };
+
+  const ProfileModal = ({ profileModalVisible, closeProfileModal }) => {
+    return (
+      <Modal
+        visible={profileModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={closeProfileModal}
+      >
+        <TouchableOpacity
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          }}
+          activeOpacity={1}
+          onPress={closeProfileModal}
+        >
+          <TouchableOpacity
+            style={{
+              width: "90%",
+              height: "25%",
+              backgroundColor: "#302f2f",
+              borderRadius: 18,
+              paddingHorizontal: 10,
+              paddingVertical: 10,
+            }}
+            onPress={() => console.log()}
+            activeOpacity={1}
+          >
+            {/* Heading */}
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <TouchableOpacity
+                onPress={closeProfileModal}
+                style={{ position: "absolute", left: 1 }}
+              >
+                <Entypo name="cross" size={20} color="white" />
+              </TouchableOpacity>
+              <Text style={{ color: "white" }}>Profile</Text>
+            </View>
+
+            {/* Profile Icon */}
+            <View
+              style={{
+                paddingVertical: 10,
+                flexDirection: "row",
+                alignItems: "center",
+                borderBottomColor: "#4a4848",
+                borderBottomWidth: 1,
+              }}
+            >
+              <View
+                style={{
+                  width: 35,
+                  height: 35,
+                  borderRadius: 75,
+                  borderWidth: 1,
+                  borderColor: "white",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "rgba(0, 0, 0, 0.5)", // Transparent black color
+                }}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 10,
+                    fontWeight: "bold",
+                  }}
+                >
+                  RH
+                </Text>
+              </View>
+              <View style={{ paddingLeft: 5 }}>
+                <Text style={{ color: "white", fontSize: 15 }}>Ryan Hu</Text>
+                <Text style={{ color: "#706f6f", fontSize: 10 }}>
+                  ryanhu200@gmail.com
+                </Text>
+              </View>
+            </View>
+            {/* Rest */}
+            <View
+              style={{
+                paddingVertical: 10,
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ color: "white" }}>View bookmarks</Text>
+            </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
+    );
+  };
+
+  return (
+    <View>
+      {/* Header Banner */}
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+          height: 50,
+        }}
+      >
+        <TouchableOpacity
+          onPress={openBibleModal}
+          style={{ color: "white", position: "absolute", left: 15 }}
+        >
+          <MaterialCommunityIcons name="menu" size={28} color="white" />
+        </TouchableOpacity>
+
+        <Text style={{ color: "white", fontSize: 18 }}>
+          {" "}
+          {book} {chapter.toString()}{" "}
+        </Text>
+
+        {isBookmark ? (
+          <TouchableOpacity onPress={unbookmark}>
+            <Ionicons name="ios-bookmark" size={24} color="white" />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={bookmark}>
+            <Ionicons name="ios-bookmark-outline" size={24} color="white" />
+          </TouchableOpacity>
+        )}
+
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            position: "absolute",
+            right: 15,
+          }}
+        >
+          <TouchableOpacity onPress={openProfileModal}>
+            <View
+              style={{
+                width: 25,
+                height: 25,
+                borderRadius: 75,
+                borderWidth: 1,
+                borderColor: "white",
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "rgba(0, 0, 0, 0.5)", // Transparent black color
+              }}
+            >
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 10,
+                  fontWeight: "bold",
+                }}
+              >
+                RH
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Profile Modal Component */}
+      <ProfileModal
+        profileModalVisible={profileModalVisible}
+        closeProfileModal={closeProfileModal}
+      />
+
+      {/* Bible Modal Component */}
+      <BibleModal
+        bibleModalVisible={bibleModalVisible}
+        closeBibleModal={closeBibleModal}
+      />
     </View>
   );
 };

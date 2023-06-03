@@ -2,8 +2,6 @@ import { View, Text, StyleSheet, TextInput, Button, Alert } from "react-native";
 import db from "@react-native-firebase/database";
 import auth from "@react-native-firebase/auth";
 import React, { useRef, useState, useEffect } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const SignInScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -37,14 +35,36 @@ const SignInScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <TextInput
-        style={styles.input}
+        style={{
+          color: "white",
+          fontSize: 15,
+          borderWidth: 1,
+          borderColor: "white",
+          borderRadius: 4,
+          padding: 8,
+          marginBottom: 16,
+          height: 40,
+          width: "100%",
+        }}
         placeholder="Email"
+        placeholderTextColor={"white"}
         onChangeText={setEmail}
         value={email}
       />
       <TextInput
-        style={styles.input}
+        style={{
+          color: "white",
+          fontSize: 15,
+          borderWidth: 1,
+          borderColor: "white",
+          borderRadius: 4,
+          padding: 8,
+          marginBottom: 16,
+          height: 40,
+          width: "100%",
+        }}
         placeholder="Password"
+        placeholderTextColor={"white"}
         onChangeText={setPassword}
         value={password}
         secureTextEntry
@@ -60,15 +80,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
-  },
-  input: {
-    height: 40,
-    width: "100%",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 4,
-    padding: 8,
-    marginBottom: 16,
+    backgroundColor: "gray",
   },
 });
 

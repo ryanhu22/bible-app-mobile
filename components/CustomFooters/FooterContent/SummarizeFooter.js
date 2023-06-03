@@ -29,8 +29,8 @@ const SummarizeFooter = ({ book, chapter, hideSummarize }) => {
   }, []);
 
   const explain = async (question) => {
-    // const response = await explainAPI(question);
-    const response = "This is a mock response for the summarize footer";
+    var response = "This is a mock response for the summarize footer";
+    // response = await explainAPI(question);
     setExplainText(response);
   };
 
@@ -77,18 +77,21 @@ const SummarizeFooter = ({ book, chapter, hideSummarize }) => {
       {explainText ? (
         // I don't like how height is hard coded
         <View>
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={{
-              color: "#c7c5c5",
-              paddingVertical: 20,
-              paddingHorizontal: 20,
-            }}
-          >
-            {currentQuestion}
-          </Text>
-          <View style={{ alignItems: "center" }}>
+          {currentQuestion ? (
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{
+                color: "#c7c5c5",
+                paddingTop: 20,
+                paddingHorizontal: 20,
+              }}
+            >
+              {currentQuestion}
+            </Text>
+          ) : null}
+
+          <View style={{ alignItems: "center", paddingTop: 20 }}>
             <ScrollView
               style={{
                 height: 230,

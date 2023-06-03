@@ -7,10 +7,12 @@ import {
   TextInput,
   Dimensions,
 } from "react-native";
+// Texts
 import RegularText from "./CustomTexts/RegularText";
 import VerseText from "./CustomTexts/VerseText";
 import HeaderText from "./CustomTexts/HeaderText";
 import TextNoNewline from "./CustomTexts/TextNoNewline";
+// Footers
 import SwipeableFooter from "./CustomFooters/SwipeableFooter";
 import TypeCommentFooter from "./CustomFooters/FooterContent/TypeCommentFooter";
 import ShowCommentFooter from "./CustomFooters/FooterContent/ShowCommentFooter";

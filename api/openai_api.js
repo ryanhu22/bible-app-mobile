@@ -34,6 +34,7 @@ export const explainAPI = async (question) => {
       ],
     });
     console.log(completion.data.choices[0].message.content);
+    console.log("API done!");
     return completion.data.choices[0].message.content;
   } catch (error) {
     // Consider adjusting the error handling logic for your use case

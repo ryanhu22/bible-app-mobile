@@ -67,21 +67,25 @@ const HomeScreen = () => {
     john: "John",
     acts: "Acts",
     romans: "Romans",
-    corinthians: "1 Corinthians",
+    "1corinthians": "1 Corinthians",
+    "2corinthians": "2 Corinthians",
     galatians: "Galatians",
     ephesians: "Ephesians",
     philippians: "Philippians",
     colossians: "Colossians",
-    thessalonians: "1 Thessalonians",
-    timothy: "1 Timothy",
+    "1thessalonians": "1 Thessalonians",
+    "2thessalonians": "2 Thessalonians",
+    "1timothy": "1 Timothy",
+    "2timothy": "2 Timothy",
     titus: "Titus",
     philemon: "Philemon",
     hebrews: "Hebrews",
     james: "James",
-    peter: "1 Peter",
-    john1: "1 John",
-    john2: "2 John",
-    john3: "3 John",
+    "1peter": "1 Peter",
+    "2peter": "2 Peter",
+    "1john": "1 John",
+    "2john": "2 John",
+    "3john": "3 John",
     jude: "Jude",
     revelation: "Revelation",
   };
@@ -242,10 +246,8 @@ const HomeScreen = () => {
   const handleSwipeEnd = (direction) => {
     if (direction === "right") {
       search(book, chapter + 1);
-      //   setChapter(chapter + 1);
     } else {
       search(book, chapter - 1);
-      //   setChapter(chapter - 1);
     }
 
     Animated.timing(translateX, {

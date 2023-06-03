@@ -37,8 +37,8 @@ const ExplainFooter = ({
   }, []);
 
   const explain = async (question) => {
-    // const response = await explainAPI(question);
-    const response = `This is a mock response for AI Footer. Your question was ${question}`;
+    var response = `This is a mock response for EXPLAIN Footer. Your question was ${question}`;
+    // response = await explainAPI(question);
     setExplainText(response);
   };
 
@@ -99,18 +99,20 @@ const ExplainFooter = ({
       {explainText ? (
         // I don't like how height is hard coded
         <View>
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={{
-              color: "#c7c5c5",
-              paddingVertical: 20,
-              paddingHorizontal: 20,
-            }}
-          >
-            {currentQuestion}
-          </Text>
-          <View style={{ alignItems: "center" }}>
+          {currentQuestion ? (
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{
+                color: "#c7c5c5",
+                paddingTop: 20,
+                paddingHorizontal: 20,
+              }}
+            >
+              {currentQuestion}
+            </Text>
+          ) : null}
+          <View style={{ alignItems: "center", paddingTop: 20 }}>
             <ScrollView
               style={{
                 height: 230,
