@@ -33,6 +33,7 @@ import {
 
 const Passage = ({ book, bookFormatted, chapter, passage }) => {
   // Layout Functionalities
+  const [scrollHeight, setScrollHeight] = useState(0);
   const screenHeight = Dimensions.get("window").height;
   const scrollViewHeightFull = screenHeight * 0.85; // Adjust the percentage as desired
   const scrollViewRef = useRef(null);
@@ -107,32 +108,26 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
       } else {
         appendToUnderlineIds(verse);
       }
-      //   const pageY = event.nativeEvent.pageY - 100;
+      const pageY = event.nativeEvent.pageY - 100;
 
-      //   // Handle scroll
-      //   //   console.log("ScrollViewHeight: ", scrollViewHeight);
-      //   //   console.log("PageY: " + pageY);
-      //   const scrollOffset = scrollViewHeight - pageY;
-      //   //   No need to scroll
-      //   if (scrollOffset > 100) {
-      //     return;
-      //   } else if (scrollOffset < 0) {
-      //     return;
-      //   }
-      //   const scrollUp = 400 - scrollOffset; // 200 is how big of a footer you want to display.
-      //   //   console.log("ScrollOffset", scrollOffset);
-      //   //   console.log("ScrollUp", scrollUp);
-      //   //   console.log(scrollViewRef.current);
-      //   const currentOffset = scrollViewRef.current.getContentOffset?.().y || 0;
-      //   //   console.log("CurrentOffset", currentOffset);
-      //   //   console.log("???", event.nativeEvent.contentOffset.y);
-      //   //   console.log(currentOffset - scrollUp);
-      //   scrollViewRef.current.scrollTo({
-      //     y: currentOffset + scrollUp,
-      //     animated: true,
-      //   });
+      // Handle scroll
+      const scrollOffset = scrollViewHeight - pageY;
+      //   No need to scroll
+      if (scrollOffset > 250) {
+        return;
+      }
+      const scrollUp = 250 - scrollOffset; // 250 is how big of a footer you want to display.
+      const currentOffset = scrollHeight;
+      scrollViewRef.current.scrollTo({
+        y: currentOffset + scrollUp,
+        animated: true,
+      });
     }
     return;
+  };
+
+  const handleScroll = (e) => {
+    setScrollHeight(e.nativeEvent.contentOffset.y);
   };
 
   const sendComment = () => {
@@ -226,9 +221,13 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
     <View style={{ flexDirection: "column" }}>
       <ScrollView
         ref={scrollViewRef}
+        scrollEventThrottle={16}
         onLayout={(event) => {
           const { height } = event.nativeEvent.layout;
           setScrollViewHeight(height);
+        }}
+        onScroll={(e) => {
+          handleScroll(e);
         }}
         style={{ paddingHorizontal: 15, height: scrollViewHeightFull }}
       >
@@ -299,6 +298,9 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
               </Text>
             </View>
           </TouchableOpacity>
+        </View>
+        <View style={{ flex: 1, height: 100 }}>
+          <Text style={{ color: "white" }}>TEST</Text>
         </View>
       </ScrollView>
 
