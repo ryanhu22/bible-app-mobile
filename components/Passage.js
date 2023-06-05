@@ -62,6 +62,7 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
 
   // On new page, reset everything
   useEffect(() => {
+    scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: false });
     setUnderlineIds([]);
     setHighlightYellowHighlightIds(new Set());
     setComments({});
@@ -299,9 +300,7 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
             </View>
           </TouchableOpacity>
         </View>
-        <View style={{ flex: 1, height: 100 }}>
-          <Text style={{ color: "white" }}>TEST</Text>
-        </View>
+        <View style={{ flex: 1, height: 100 }}></View>
       </ScrollView>
 
       {showFooter && !showCommentFooter ? (
