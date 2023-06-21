@@ -26,6 +26,12 @@
           }
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "6a2fd078-42ce-4ac5-98f8-b5ac85ef1ae5"
+      }
+    },
+    "scheme": "bible-mobile-app"
   }
 }

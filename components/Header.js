@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -12,6 +12,8 @@ import {
   Button,
   TouchableWithoutFeedback,
 } from "react-native";
+import ProfileModal from "./CustomModals/ProfileModal";
+import SignInModal from "./CustomModals/SignInModal";
 import {
   MaterialCommunityIcons,
   AntDesign,
@@ -20,6 +22,7 @@ import {
   Ionicons,
   Entypo,
 } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const booksOT = [
   { id: "gen", name: "Genesis" },
@@ -165,7 +168,10 @@ const bookCutoffs = {
 const Header = ({ book, chapter, search }) => {
   const [isBookmark, setIsBookmark] = useState(false);
   const [profileModalVisible, setProfileModalVisible] = useState(false);
+  const [signInModalVisible, setSignInModalVisible] = useState(false);
   const [bibleModalVisible, setBibleModalVisible] = useState(false);
+
+  const [userInfo, setUserInfo] = useState(null);
 
   const openProfileModal = () => {
     setProfileModalVisible(true);
@@ -175,12 +181,26 @@ const Header = ({ book, chapter, search }) => {
     setProfileModalVisible(false);
   };
 
+  const openSignInModal = () => {
+    setSignInModalVisible(true);
+  };
+
+  const closeSignInModal = () => {
+    setSignInModalVisible(false);
+    setProfileModalVisible(true);
+  };
+
   const openBibleModal = () => {
     setBibleModalVisible(true);
   };
 
   const closeBibleModal = () => {
     setBibleModalVisible(false);
+  };
+
+  const showSignIn = () => {
+    setProfileModalVisible(false); /* close profile modal */
+    setSignInModalVisible(true);
   };
 
   const bookmark = () => {
@@ -194,6 +214,26 @@ const Header = ({ book, chapter, search }) => {
   const searchAndClose = (book, chapter) => {
     setBibleModalVisible(false);
     search(book.toLowerCase().replace(/\s/g, ""), chapter);
+  };
+
+  useEffect(() => {
+    checkIfSignedIn();
+  }, []);
+
+  const checkIfSignedIn = async () => {
+    const user = await AsyncStorage.getItem("@user");
+    if (user) {
+      setUserInfo(JSON.parse(user));
+    }
+  };
+
+  const signOut = async () => {
+    AsyncStorage.removeItem("@user");
+    setUserInfo(null);
+  };
+
+  const setProfile = (userInfo) => {
+    setUserInfo(userInfo);
   };
 
   const BookButton = ({ bookName }) => {
@@ -414,108 +454,6 @@ const Header = ({ book, chapter, search }) => {
     );
   };
 
-  const ProfileModal = ({ profileModalVisible, closeProfileModal }) => {
-    return (
-      <Modal
-        visible={profileModalVisible}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={closeProfileModal}
-      >
-        <TouchableOpacity
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-          }}
-          activeOpacity={1}
-          onPress={closeProfileModal}
-        >
-          <TouchableOpacity
-            style={{
-              width: "90%",
-              height: "25%",
-              backgroundColor: "#302f2f",
-              borderRadius: 18,
-              paddingHorizontal: 10,
-              paddingVertical: 10,
-            }}
-            onPress={() => console.log()}
-            activeOpacity={1}
-          >
-            {/* Heading */}
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <TouchableOpacity
-                onPress={closeProfileModal}
-                style={{ position: "absolute", left: 1 }}
-              >
-                <Entypo name="cross" size={20} color="white" />
-              </TouchableOpacity>
-              <Text style={{ color: "white" }}>Profile</Text>
-            </View>
-
-            {/* Profile Icon */}
-            <View
-              style={{
-                paddingVertical: 10,
-                flexDirection: "row",
-                alignItems: "center",
-                borderBottomColor: "#4a4848",
-                borderBottomWidth: 1,
-              }}
-            >
-              <View
-                style={{
-                  width: 35,
-                  height: 35,
-                  borderRadius: 75,
-                  borderWidth: 1,
-                  borderColor: "white",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: "rgba(0, 0, 0, 0.5)", // Transparent black color
-                }}
-              >
-                <Text
-                  style={{
-                    color: "white",
-                    fontSize: 10,
-                    fontWeight: "bold",
-                  }}
-                >
-                  RH
-                </Text>
-              </View>
-              <View style={{ paddingLeft: 5 }}>
-                <Text style={{ color: "white", fontSize: 15 }}>Ryan Hu</Text>
-                <Text style={{ color: "#706f6f", fontSize: 10 }}>
-                  ryanhu200@gmail.com
-                </Text>
-              </View>
-            </View>
-            {/* Rest */}
-            <View
-              style={{
-                paddingVertical: 10,
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <Text style={{ color: "white" }}>View bookmarks</Text>
-            </View>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
-    );
-  };
-
   return (
     <View>
       {/* Header Banner */}
@@ -578,7 +516,9 @@ const Header = ({ book, chapter, search }) => {
                   fontWeight: "bold",
                 }}
               >
-                RH
+                {userInfo
+                  ? userInfo.first_name[0] + userInfo.last_name[0]
+                  : "NA"}
               </Text>
             </View>
           </TouchableOpacity>
@@ -587,8 +527,17 @@ const Header = ({ book, chapter, search }) => {
 
       {/* Profile Modal Component */}
       <ProfileModal
+        userInfo={userInfo}
         profileModalVisible={profileModalVisible}
         closeProfileModal={closeProfileModal}
+        showSignIn={showSignIn}
+        signOut={signOut}
+      />
+
+      <SignInModal
+        signInModalVisible={signInModalVisible}
+        closeSignInModal={closeSignInModal}
+        setProfile={setProfile}
       />
 
       {/* Bible Modal Component */}
