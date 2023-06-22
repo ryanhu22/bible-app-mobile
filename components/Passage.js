@@ -404,7 +404,7 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
         ) : (
           <SwipeableFooter
             style={{ flex: 0.3 }}
-            height={170}
+            height={250}
             setShowFooter={setShowFooter}
             setShowCommentFooter={setShowCommentFooter}
             setIsReset={setIsReset}

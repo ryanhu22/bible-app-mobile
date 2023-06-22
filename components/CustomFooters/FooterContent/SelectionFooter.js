@@ -109,6 +109,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     paddingVertical: 10,
     paddingHorizontal: 20,
+    marginTop: 15,
   },
   topHalf: {
     flexDirection: "row",

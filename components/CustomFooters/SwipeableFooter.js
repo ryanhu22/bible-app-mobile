@@ -1,6 +1,24 @@
-import { View, StyleSheet, PanResponder, Animated } from "react-native";
-
+import {
+  View,
+  StyleSheet,
+  PanResponder,
+  Text,
+  TouchableOpacity,
+} from "react-native";
+import {
+  GestureHandlerRootView,
+  PanGestureHandler,
+} from "react-native-gesture-handler";
+import { Entypo } from "@expo/vector-icons";
 import React, { useRef, useState } from "react";
+import Animated, {
+  useAnimatedGestureHandler,
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  Easing,
+  runOnJS,
+} from "react-native-reanimated";
 
 const SwipeableFooter = ({
   children,
@@ -16,49 +34,60 @@ const SwipeableFooter = ({
   hideAI,
 }) => {
   const [isVisible, setIsVisible] = useState(true);
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (_, gestureState) => {
-        // Only activate the pan responder if the gesture is moving downwards
-        return gestureState.dy > 0;
-      },
-      onPanResponderMove: (_, gestureState) => {
-        // Update the position of the footer as the user drags it downwards
-        footerPosition.setValue(gestureState.dy);
-      },
-      onPanResponderRelease: (_, gestureState) => {
-        // If the user has dragged the footer down by more than half of its height,
-        // animate it out of view, otherwise animate it back to its original position
-        if (gestureState.dy > FOOTER_HEIGHT / 2) {
-          animateFooterOut();
-        } else {
-          animateFooterBack();
-        }
-      },
-    })
-  ).current;
-
   const FOOTER_HEIGHT = height; // Replace with the actual height of your footer
-  const footerPosition = useRef(new Animated.Value(0)).current;
+  const y = useSharedValue(0);
 
-  const animateFooterOut = () => {
-    Animated.timing(footerPosition, {
-      toValue: FOOTER_HEIGHT,
-      duration: 300,
-      useNativeDriver: false,
-    }).start(() => {
-      setIsVisible(false);
-      setShowFooter(false);
-      setShowCommentFooter(false);
-      setIsReset(true);
-      setUnderlineIds([]);
-      hideCommentInput();
-      hideExplain();
-      hideSummarize();
-      hideAI();
-      setCurrVerseComment(null);
-    });
+  const animatedContainerStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateY: withTiming(y.value, {
+          duration: 100,
+          easing: Easing.linear,
+        }),
+      },
+    ],
+  }));
+
+  const handleCloseFooter = () => {
+    setIsVisible(false);
+    setShowFooter(false);
+    setShowCommentFooter(false);
+    setIsReset(true);
+    setUnderlineIds([]);
+    hideCommentInput();
+    hideExplain();
+    hideSummarize();
+    hideAI();
+    setCurrVerseComment(null);
   };
+
+  const closeGestureHandler = useAnimatedGestureHandler({
+    onStart: (e) => {
+      "on start";
+    },
+    onActive: (e) => {
+      if (e.translationY > 0) {
+        y.value = e.translationY;
+      }
+    },
+    onEnd: (e) => {
+      if (y.value > FOOTER_HEIGHT / 2) {
+        runOnJS(setIsVisible)(false);
+        runOnJS(setShowFooter)(false);
+        runOnJS(setShowCommentFooter)(false);
+        runOnJS(setIsReset)(true);
+        runOnJS(setUnderlineIds)([]);
+        runOnJS(hideCommentInput)();
+        runOnJS(hideExplain)();
+        runOnJS(hideSummarize)();
+        runOnJS(hideAI)();
+        runOnJS(setCurrVerseComment)(null);
+      } else {
+        y.value = 0;
+      }
+    },
+  });
+
   const animateFooterBack = () => {
     Animated.timing(footerPosition, {
       toValue: 0,
@@ -67,40 +96,45 @@ const SwipeableFooter = ({
     }).start();
   };
 
-  const footerStyle = {
-    transform: [
-      {
-        translateY: footerPosition,
-      },
-    ],
-  };
-
   if (!isVisible) {
     return null;
   } else {
     return (
-      <>
-        <Animated.View
-          style={[
-            {
-              position: "absolute",
-              bottom: -1 * (900 - height),
-              left: 0,
-              right: 0,
-              height: 900, // Replace with the actual height of your footer
-              backgroundColor: "#0a0a0a",
-              borderTopWidth: 1,
-              borderTopColor: "black",
-              padding: 10,
-            },
-            footerStyle,
-          ]}
-          {...panResponder.panHandlers}
-        >
-          <View style={styles.handle} />
-          {children}
-        </Animated.View>
-      </>
+      <Animated.View
+        style={[
+          {
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "#0a0a0a",
+            borderTopWidth: 1,
+            borderTopColor: "black",
+            padding: 10,
+            height: FOOTER_HEIGHT,
+          },
+          animatedContainerStyle,
+        ]}
+      >
+        <PanGestureHandler onGestureEvent={closeGestureHandler}>
+          <Animated.View
+            style={{
+              height: 40,
+              borderBottomColor: "gray",
+              borderBottomWidth: 1,
+            }}
+          >
+            <View style={styles.handle} />
+            <TouchableOpacity
+              onPress={handleCloseFooter}
+              style={{ position: "absolute", right: 15 }}
+            >
+              <Entypo name="cross" size={30} color="white" />
+            </TouchableOpacity>
+          </Animated.View>
+        </PanGestureHandler>
+        {children}
+      </Animated.View>
     );
   }
 };
@@ -108,17 +142,6 @@ const SwipeableFooter = ({
 const styles = StyleSheet.create({
   content: {
     flex: 1,
-  },
-  footer: {
-    position: "absolute",
-    bottom: -780,
-    left: 0,
-    right: 0,
-    height: 900, // Replace with the actual height of your footer
-    backgroundColor: "#0a0a0a",
-    borderTopWidth: 1,
-    borderTopColor: "black",
-    padding: 10,
   },
   footerInput: {
     position: "absolute",
@@ -133,9 +156,9 @@ const styles = StyleSheet.create({
   },
   handle: {
     alignSelf: "center",
-    width: 30,
-    height: 5,
-    backgroundColor: "white",
+    width: 40,
+    height: 8,
+    backgroundColor: "gray",
     borderRadius: 5,
     marginBottom: 5,
   },
