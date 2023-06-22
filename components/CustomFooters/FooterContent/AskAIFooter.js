@@ -50,6 +50,7 @@ const AskAIFooter = ({
 
   return (
     <View style={{ flex: 1 }}>
+      {/* Heading */}
       <View
         style={{
           flexDirection: "row",
@@ -57,6 +58,7 @@ const AskAIFooter = ({
           alignItems: "center",
           paddingHorizontal: 20,
           paddingVertical: 10,
+          flex: 1,
         }}
       >
         <TouchableOpacity style={{ alignItems: "center" }} onPress={hideAI}>
@@ -88,9 +90,10 @@ const AskAIFooter = ({
         <View></View>
       </View>
 
+      {/* Body */}
       {explainText ? (
         // I don't like how height is hard coded
-        <View>
+        <View style={{ flex: 6 }}>
           <Text
             numberOfLines={1}
             ellipsizeMode="tail"
@@ -132,14 +135,11 @@ const AskAIFooter = ({
           </View>
         </View>
       ) : (
-        // I don't like how height is hard coded
         <View
           style={{
-            height: 230,
-            paddingVertical: 20,
-            paddingHorizontal: 20,
             alignItems: "center",
             justifyContent: "center",
+            flex: 6,
           }}
         >
           <Text style={{ color: "white", marginBottom: 10 }}>
@@ -157,7 +157,16 @@ const AskAIFooter = ({
         </View>
       )}
 
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
+      {/* Footer  */}
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          marginVertical: 10,
+          marginHorizontal: 5,
+          flex: 1,
+        }}
+      >
         <View
           style={{
             backgroundColor: "#141414",

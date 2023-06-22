@@ -39,7 +39,7 @@ const ExplainFooter = ({
   const explain = async (question) => {
     var response = `This is a mock response for EXPLAIN Footer. Your question was ${question}`;
     // response = await explainAPI(question);
-    setExplainText(response);
+    // setExplainText(response);
   };
 
   const askNextQuestion = async () => {
@@ -54,14 +54,15 @@ const ExplainFooter = ({
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ marginTop: 15, flex: 1 }}>
+      {/* Heading */}
       <View
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
           paddingHorizontal: 20,
-          paddingVertical: 10,
+          flex: 1,
         }}
       >
         <TouchableOpacity
@@ -96,9 +97,10 @@ const ExplainFooter = ({
         <View></View>
       </View>
 
+      {/* Body */}
       {explainText ? (
         // I don't like how height is hard coded
-        <View>
+        <View style={{ flex: 6 }}>
           {currentQuestion ? (
             <Text
               numberOfLines={1}
@@ -112,19 +114,20 @@ const ExplainFooter = ({
               {currentQuestion}
             </Text>
           ) : null}
-          <View style={{ alignItems: "center", paddingTop: 20 }}>
+          <View style={{ alignItems: "center", paddingTop: 20, flex: 1 }}>
             <ScrollView
               style={{
-                height: 230,
                 paddingHorizontal: 20,
               }}
+              contentContainerStyle={{ flex: 1 }}
             >
-              <Text style={{ color: "white", marginBottom: 10 }}>
-                {explainText}
-              </Text>
+              <Text style={{ color: "white" }}>{explainText}</Text>
             </ScrollView>
 
-            <TouchableOpacity onPress={addComment}>
+            <TouchableOpacity
+              onPress={addComment}
+              style={{ marginVertical: 10 }}
+            >
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <SimpleLineIcons
                   name="note"
@@ -144,11 +147,9 @@ const ExplainFooter = ({
         // I don't like how height is hard coded
         <View
           style={{
-            height: 230,
-            paddingVertical: 20,
-            paddingHorizontal: 20,
             alignItems: "center",
             justifyContent: "center",
+            flex: 6,
           }}
         >
           <Text style={{ color: "white", marginBottom: 10 }}>
@@ -166,7 +167,16 @@ const ExplainFooter = ({
         </View>
       )}
 
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
+      {/* Footer */}
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          marginVertical: 10,
+          marginHorizontal: 5,
+          flex: 1,
+        }}
+      >
         <View
           style={{
             backgroundColor: "#141414",

@@ -10,7 +10,7 @@ const TypeCommentFooter = ({
   setCommentInput,
 }) => {
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ marginTop: 15 }}>
       <View
         style={{
           flexDirection: "row",
@@ -27,22 +27,6 @@ const TypeCommentFooter = ({
           <AntDesign name="back" size={20} color="#20c7fa" />
           <Text style={{ color: "#20c7fa" }}>Back</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={{ alignItems: "center" }}
-          onPress={sendComment}
-        >
-          <Feather name="send" size={18} color="#20c7fa" />
-          <Text style={{ color: "#20c7fa" }}>Post</Text>
-        </TouchableOpacity>
-      </View>
-      <View
-        style={{
-          paddingVertical: 20,
-          paddingHorizontal: 20,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
         <Text style={{ color: "white" }}>
           Add a comment to verses:{" "}
           {underlineIds.map((verseNum, index) => {
@@ -53,29 +37,49 @@ const TypeCommentFooter = ({
             );
           })}
         </Text>
+        <View></View>
       </View>
+
       <View
         style={{
-          backgroundColor: "#141414",
-          margin: 20,
-          padding: 15,
-          height: 50,
-          borderWidth: 1,
-          borderColor: "white",
+          flexDirection: "row",
+          marginVertical: 15,
+          marginHorizontal: 5,
+          alignItems: "center",
         }}
       >
-        <TextInput
+        <View
           style={{
-            color: "white",
-            fontSize: 15,
+            backgroundColor: "#141414",
+            padding: 15,
+            height: 50,
+            borderWidth: 1,
+            borderColor: "white",
+            borderRadius: 5,
+            flex: 1,
+            marginRight: 10,
           }}
-          multiline={true}
-          autoFocus={true}
-          placeholder="Write a comment..."
-          placeholderTextColor={"#8d8d8d"}
-          onChangeText={setCommentInput}
-          value={commentInput}
-        />
+        >
+          <TextInput
+            style={{
+              color: "white",
+              fontSize: 15,
+            }}
+            multiline={true}
+            autoFocus={true}
+            placeholder="Write a comment..."
+            placeholderTextColor={"#8d8d8d"}
+            onChangeText={setCommentInput}
+            value={commentInput}
+          />
+        </View>
+        <TouchableOpacity
+          style={{ alignItems: "center" }}
+          onPress={sendComment}
+        >
+          <Feather name="send" size={18} color="#20c7fa" />
+          <Text style={{ color: "#20c7fa" }}>Post</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
