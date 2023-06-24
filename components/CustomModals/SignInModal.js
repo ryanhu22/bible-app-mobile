@@ -81,11 +81,25 @@ const SignInModal = ({ signInModalVisible, closeSignInModal, setProfile }) => {
       );
 
       const user = await response.json();
+      const uid = user.id;
+      const firstName = user.given_name;
+      const lastName = user.family_name;
+      const email = user.email;
+      const picture = user.picture;
+
+      var account_exists = await db().ref(`/users/${uid}`);
+      if (!account_exists) {
+        await db()
+          .ref(`/users/${uid}`)
+          .set({ firstName, lastName, email, picture });
+      }
+
       const user_parsed = {
-        first_name: user.given_name,
-        last_name: user.family_name,
-        email: user.email,
-        picture: user.picture,
+        uid: uid,
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+        picture: picture,
       };
       await AsyncStorage.setItem("@user", JSON.stringify(user_parsed));
       setUserInfo(user_parsed);
@@ -106,12 +120,15 @@ const SignInModal = ({ signInModalVisible, closeSignInModal, setProfile }) => {
           password
         );
         if (response.user) {
-          // Create user on firestore
-          await db()
-            .ref(`/users/${response.user.uid}`)
-            .set({ firstName, lastName, email });
+          const uid = response.user.uid;
+          var account_exists = await db().ref(`/users/${uid}`);
+          if (!account_exists) {
+            // Create user on firestore
+            await db().ref(`/users/${uid}`).set({ firstName, lastName, email });
+          }
           // Save user info to async storage
           const user_parsed = {
+            uid: uid,
             first_name: firstName,
             last_name: lastName,
             email: email,
@@ -146,9 +163,10 @@ const SignInModal = ({ signInModalVisible, closeSignInModal, setProfile }) => {
         );
 
         var user = null;
+        const uid = response.user.uid;
 
         await db()
-          .ref(`/users/${response.user.uid}`)
+          .ref(`/users/${uid}`)
           .once("value")
           .then((snapshot) => {
             user = snapshot.val();
@@ -157,6 +175,7 @@ const SignInModal = ({ signInModalVisible, closeSignInModal, setProfile }) => {
         if (user) {
           // Save user info to async storage
           const user_parsed = {
+            uid: uid,
             first_name: user.firstName,
             last_name: user.lastName,
             email: user.email,

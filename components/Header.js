@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import ProfileModal from "./CustomModals/ProfileModal";
 import SignInModal from "./CustomModals/SignInModal";
+import BookmarksModal from "./CustomModals/BookmarksModal";
 import {
   MaterialCommunityIcons,
   AntDesign,
@@ -22,6 +23,7 @@ import {
   Ionicons,
   Entypo,
 } from "@expo/vector-icons";
+import db from "@react-native-firebase/database";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const booksOT = [
@@ -166,12 +168,31 @@ const bookCutoffs = {
 };
 
 const Header = ({ book, chapter, search }) => {
-  const [isBookmark, setIsBookmark] = useState(false);
   const [profileModalVisible, setProfileModalVisible] = useState(false);
   const [signInModalVisible, setSignInModalVisible] = useState(false);
   const [bibleModalVisible, setBibleModalVisible] = useState(false);
+  const [bookmarksModalVisible, setBookmarksModalVisible] = useState(false);
 
   const [userInfo, setUserInfo] = useState(null);
+  const [bookmarksList, setBookmarksList] = useState([]);
+
+  useEffect(() => {
+    if (!userInfo) {
+      return;
+    }
+    const fetchBookmarks = async () => {
+      // Get current bookmarks
+      await db()
+        .ref(`/users/${userInfo.uid}/bookmarks/${book}`)
+        .once("value")
+        .then((snapshot) => {
+          if (snapshot.val()) {
+            setBookmarksList(snapshot.val()["Chapters"]);
+          }
+        });
+    };
+    fetchBookmarks();
+  }, [book, chapter]);
 
   const openProfileModal = () => {
     setProfileModalVisible(true);
@@ -198,17 +219,54 @@ const Header = ({ book, chapter, search }) => {
     setBibleModalVisible(false);
   };
 
+  const openBookmarksModal = () => {
+    setProfileModalVisible(false);
+    setBookmarksModalVisible(true);
+  };
+
+  const closeBookmarksModal = () => {
+    setBookmarksModalVisible(false);
+    setProfileModalVisible(true);
+  };
+
   const showSignIn = () => {
     setProfileModalVisible(false); /* close profile modal */
     setSignInModalVisible(true);
   };
 
+  const addBookmark = async (book, chapter) => {
+    const newBookmarksList = [...bookmarksList, chapter];
+    setBookmarksList(newBookmarksList);
+
+    // Write to DB
+    if (!userInfo) {
+      return;
+    }
+    await db()
+      .ref(`/users/${userInfo.uid}/bookmarks/${book}/`)
+      .set({ Chapters: newBookmarksList });
+  };
+
+  // Debug bookmarking twice in a book, change books unbookmark
+  const removeBookmark = async (book, chapter) => {
+    const newBookmarksList = bookmarksList.filter((c) => c !== chapter);
+    setBookmarksList(newBookmarksList);
+
+    // Write to DB
+    if (!userInfo) {
+      return;
+    }
+    await db()
+      .ref(`/users/${userInfo.uid}/bookmarks/${book}/`)
+      .set({ Chapters: newBookmarksList });
+  };
+
   const bookmark = () => {
-    setIsBookmark(true);
+    addBookmark(book, chapter);
   };
 
   const unbookmark = () => {
-    setIsBookmark(false);
+    removeBookmark(book, chapter);
   };
 
   const searchAndClose = (book, chapter) => {
@@ -477,7 +535,7 @@ const Header = ({ book, chapter, search }) => {
           {book} {chapter.toString()}{" "}
         </Text>
 
-        {isBookmark ? (
+        {bookmarksList.includes(chapter) ? (
           <TouchableOpacity onPress={unbookmark}>
             <Ionicons name="ios-bookmark" size={24} color="white" />
           </TouchableOpacity>
@@ -530,6 +588,7 @@ const Header = ({ book, chapter, search }) => {
         userInfo={userInfo}
         profileModalVisible={profileModalVisible}
         closeProfileModal={closeProfileModal}
+        openBookmarksModal={openBookmarksModal}
         showSignIn={showSignIn}
         signOut={signOut}
       />
@@ -538,6 +597,11 @@ const Header = ({ book, chapter, search }) => {
         signInModalVisible={signInModalVisible}
         closeSignInModal={closeSignInModal}
         setProfile={setProfile}
+      />
+
+      <BookmarksModal
+        bookmarksModalVisible={bookmarksModalVisible}
+        closeBookmarksModal={closeBookmarksModal}
       />
 
       {/* Bible Modal Component */}

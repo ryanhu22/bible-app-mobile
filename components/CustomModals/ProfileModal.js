@@ -25,6 +25,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const ProfileModal = ({
   userInfo,
   profileModalVisible,
+  openBookmarksModal,
   closeProfileModal,
   showSignIn,
   signOut,
@@ -164,18 +165,21 @@ const ProfileModal = ({
             )}
           </View>
           {/* Rest */}
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              paddingVertical: 10,
-              paddingHorizontal: 10,
-            }}
-          >
-            <Text style={{ color: "white" }}>View bookmarks</Text>
-            <AntDesign name="right" size={16} style={{ color: "white" }} />
-          </View>
+          <TouchableOpacity onPress={openBookmarksModal}>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                paddingVertical: 10,
+                paddingHorizontal: 10,
+              }}
+            >
+              <Text style={{ color: "white" }}>View bookmarks</Text>
+
+              <AntDesign name="right" size={16} style={{ color: "white" }} />
+            </View>
+          </TouchableOpacity>
         </TouchableOpacity>
       </TouchableOpacity>
     </Modal>
