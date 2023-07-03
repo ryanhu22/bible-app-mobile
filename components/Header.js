@@ -175,12 +175,16 @@ const Header = ({ book, chapter, search }) => {
 
   const [userInfo, setUserInfo] = useState(null);
   const [bookmarksList, setBookmarksList] = useState([]);
+  const [bookmarks, setBookmarks] = useState({});
 
+  // TODO: there's a bug in my useEffect that bookmarking a page
+  // doesn't change the selections
   useEffect(() => {
     if (!userInfo) {
       return;
     }
     const fetchBookmarks = async () => {
+      setBookmarksList([]);
       // Get current bookmarks
       await db()
         .ref(`/users/${userInfo.uid}/bookmarks/${book}`)
@@ -190,9 +194,18 @@ const Header = ({ book, chapter, search }) => {
             setBookmarksList(snapshot.val()["Chapters"]);
           }
         });
+
+      // Get all bookmarks
+      setBookmarks({});
+      await db()
+        .ref(`/users/${userInfo.uid}/bookmarks/`)
+        .once("value")
+        .then((snapshot) => {
+          setBookmarks(snapshot.val());
+        });
     };
     fetchBookmarks();
-  }, [book, chapter]);
+  }, [book, chapter, bookmarksModalVisible]);
 
   const openProfileModal = () => {
     setProfileModalVisible(true);
@@ -226,7 +239,7 @@ const Header = ({ book, chapter, search }) => {
 
   const closeBookmarksModal = () => {
     setBookmarksModalVisible(false);
-    setProfileModalVisible(true);
+    setProfileModalVisible(false);
   };
 
   const showSignIn = () => {
@@ -379,15 +392,48 @@ const Header = ({ book, chapter, search }) => {
                     chapter === chp && { borderColor: "#bfbfbf" },
                 ]}
               >
-                <Text
-                  style={[
-                    { color: "white" },
-                    book === bookName &&
-                      chapter === chp && { color: "#bfbfbf" },
-                  ]}
-                >
-                  {chp}
-                </Text>
+                {bookmarks.hasOwnProperty(bookName) &&
+                bookmarks[bookName]["Chapters"].includes(chp) ? (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Ionicons
+                      name="ios-bookmark"
+                      size={15}
+                      color={
+                        book === bookName && chapter === chp
+                          ? "#bfbfbf"
+                          : "white"
+                      }
+                      style={{ paddingRight: 3 }}
+                    />
+                    <Text
+                      style={[
+                        { color: "white" },
+                        book === bookName &&
+                          chapter === chp && { color: "#bfbfbf" },
+                      ]}
+                    >
+                      {chp}
+                    </Text>
+                  </View>
+                ) : (
+                  <View>
+                    <Text
+                      style={[
+                        { color: "white" },
+                        book === bookName &&
+                          chapter === chp && { color: "#bfbfbf" },
+                      ]}
+                    >
+                      {chp}
+                    </Text>
+                  </View>
+                )}
               </TouchableOpacity>
             ))}
           </View>
@@ -600,6 +646,11 @@ const Header = ({ book, chapter, search }) => {
       />
 
       <BookmarksModal
+        userInfo={userInfo}
+        bookmarks={bookmarks}
+        booksOT={booksOT}
+        booksNT={booksNT}
+        bookCutoffs={bookCutoffs}
         bookmarksModalVisible={bookmarksModalVisible}
         closeBookmarksModal={closeBookmarksModal}
       />

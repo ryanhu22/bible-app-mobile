@@ -19,6 +19,13 @@ import {
 const SelectionFooter = ({
   underlineIds,
   highlightYellow,
+  highlightBlue,
+  highlightPink,
+  highlightGreen,
+  highlightPurple,
+  highlightOrange,
+  highlightRed,
+  removeHighlight,
   showCommentInput,
   showExplain,
   showAI,
@@ -51,18 +58,122 @@ const SelectionFooter = ({
           style={{ marginRight: 10 }}
         />
         <View style={styles.colorContainer}>
+          {/* Yellow */}
           <TouchableOpacity onPress={highlightYellow}>
-            <View style={styles.colorCircleYellow}></View>
+            <View
+              style={{
+                backgroundColor: "#f2ef88",
+                borderColor: "black",
+                borderWidth: 1,
+                width: 30,
+                height: 30,
+                borderRadius: 30,
+                marginRight: 10,
+              }}
+            ></View>
           </TouchableOpacity>
-          <View style={styles.colorCircleBlue}></View>
-          <View style={styles.colorCircleGreen}></View>
-          <View style={styles.colorCircleRed}></View>
-          <TouchableOpacity onPress={highlightYellow}>
-            <View style={styles.colorCircleYellow}></View>
+          {/* Blue */}
+          <TouchableOpacity onPress={highlightBlue}>
+            <View
+              style={{
+                backgroundColor: "#55cef2",
+                borderColor: "black",
+                borderWidth: 1,
+                width: 30,
+                height: 30,
+                borderRadius: 30,
+                marginRight: 10,
+              }}
+            ></View>
           </TouchableOpacity>
-          <View style={styles.colorCircleBlue}></View>
-          <View style={styles.colorCircleGreen}></View>
-          <View style={styles.colorCircleRed}></View>
+          {/* Pink */}
+          <TouchableOpacity onPress={highlightPink}>
+            <View
+              style={{
+                backgroundColor: "#fc65a7",
+                borderColor: "black",
+                borderWidth: 1,
+                width: 30,
+                height: 30,
+                borderRadius: 30,
+                marginRight: 10,
+              }}
+            ></View>
+          </TouchableOpacity>
+          {/* Green */}
+          <TouchableOpacity onPress={highlightGreen}>
+            <View
+              style={{
+                backgroundColor: "#63ff6e",
+                borderColor: "black",
+                borderWidth: 1,
+                width: 30,
+                height: 30,
+                borderRadius: 30,
+                marginRight: 10,
+              }}
+            ></View>
+          </TouchableOpacity>
+          {/* Purple */}
+          <TouchableOpacity onPress={highlightPurple}>
+            <View
+              style={{
+                backgroundColor: "#c66bfa",
+                borderColor: "black",
+                borderWidth: 1,
+                width: 30,
+                height: 30,
+                borderRadius: 30,
+                marginRight: 10,
+              }}
+            ></View>
+          </TouchableOpacity>
+          {/* Orange */}
+          <TouchableOpacity onPress={highlightOrange}>
+            <View
+              style={{
+                backgroundColor: "#faa466",
+                borderColor: "black",
+                borderWidth: 1,
+                width: 30,
+                height: 30,
+                borderRadius: 30,
+                marginRight: 10,
+              }}
+            ></View>
+          </TouchableOpacity>
+          {/* Red */}
+          <TouchableOpacity onPress={highlightRed}>
+            <View
+              style={{
+                backgroundColor: "#ff2e4d",
+                borderColor: "black",
+                borderWidth: 1,
+                width: 30,
+                height: 30,
+                borderRadius: 30,
+                marginRight: 10,
+              }}
+            ></View>
+          </TouchableOpacity>
+          {/* Gray */}
+          <TouchableOpacity onPress={removeHighlight}>
+            <View
+              style={{
+                backgroundColor: "#cccaca",
+                borderColor: "black",
+                borderWidth: 1,
+                width: 30,
+                height: 30,
+                borderRadius: 30,
+                marginRight: 10,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ fontSize: 15 }}>x</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
       <View style={styles.bottomHalf}>

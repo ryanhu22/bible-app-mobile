@@ -14,7 +14,7 @@ const ShowCommentFooter = ({ currVerseComment, comments }) => {
   return (
     <View style={styles.footer}>
       {/* Header */}
-      {/* <View
+      <View
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
@@ -31,8 +31,7 @@ const ShowCommentFooter = ({ currVerseComment, comments }) => {
         >
           Verse {currVerseComment}
         </Text>
-        <Entypo name="cross" size={34} color="white" />
-      </View> */}
+      </View>
 
       <ScrollView>
         <Text style={{ color: "white", marginTop: 5 }}>

@@ -32,7 +32,7 @@ const AskAIFooter = ({
   const explain = async (question) => {
     var response = `This is a mock response for AI Footer. Your question was ${question}`;
     // response = await explainAPI(question);
-    setExplainText(response);
+    // setExplainText(response);
   };
 
   const askNextQuestion = async () => {

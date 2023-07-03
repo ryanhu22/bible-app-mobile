@@ -31,6 +31,9 @@ import {
   Ionicons,
 } from "@expo/vector-icons";
 
+import db from "@react-native-firebase/database";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const Passage = ({ book, bookFormatted, chapter, passage }) => {
   // Layout Functionalities
   const [scrollHeight, setScrollHeight] = useState(0);
@@ -43,10 +46,15 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
   const [isReset, setIsReset] = useState(false);
 
   // Highlighting Functionalities
+  const [userInfo, setUserInfo] = useState(null);
   const [underlineIds, setUnderlineIds] = useState([]);
-  const [yellowHighlightIds, setHighlightYellowHighlightIds] = useState(
-    new Set()
-  );
+  const [yellowHighlightIds, setYellowHighlightIds] = useState(new Set());
+  const [blueHighlightIds, setBlueHighlightIds] = useState(new Set());
+  const [pinkHighlightIds, setPinkHighlightIds] = useState(new Set());
+  const [greenHighlightIds, setGreenHighlightIds] = useState(new Set());
+  const [purpleHighlightIds, setPurpleHighlightIds] = useState(new Set());
+  const [orangeHighlightIds, setOrangeHighlightIds] = useState(new Set());
+  const [redHighlightIds, setRedHighlightIds] = useState(new Set());
 
   // Commenting Functionalities
   const [comments, setComments] = useState({});
@@ -64,12 +72,26 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
   useEffect(() => {
     scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: false });
     setUnderlineIds([]);
-    setHighlightYellowHighlightIds(new Set());
+    setYellowHighlightIds(new Set());
+    setBlueHighlightIds(new Set());
+    setPinkHighlightIds(new Set());
+    setGreenHighlightIds(new Set());
+    setPurpleHighlightIds(new Set());
+    setOrangeHighlightIds(new Set());
+    setRedHighlightIds(new Set());
     setComments({});
     setCurrVerseComment(null);
     setShowCommentFooter(false);
     setShowCommentFooterInput(false);
     setCommentInput("");
+
+    const checkUser = async () => {
+      const user = await AsyncStorage.getItem("@user");
+      if (user) {
+        setUserInfo(JSON.parse(user));
+      }
+    };
+    checkUser();
   }, [passage]);
 
   // Handle automatic closing of footer when no underlines
@@ -132,6 +154,7 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
   };
 
   const sendComment = () => {
+    removeHighlight();
     if (commentInput === "") {
       return;
     }
@@ -156,12 +179,146 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
     hideCommentInput();
   };
 
+  const removeHighlight = () => {
+    underlineIds.forEach((verse) => {
+      yellowHighlightIds.delete(verse);
+      blueHighlightIds.delete(verse);
+      pinkHighlightIds.delete(verse);
+      greenHighlightIds.delete(verse);
+      purpleHighlightIds.delete(verse);
+      orangeHighlightIds.delete(verse);
+      redHighlightIds.delete(verse);
+    });
+    setYellowHighlightIds(new Set(yellowHighlightIds));
+    setBlueHighlightIds(new Set(blueHighlightIds));
+    setPinkHighlightIds(new Set(pinkHighlightIds));
+    setGreenHighlightIds(new Set(greenHighlightIds));
+    setPurpleHighlightIds(new Set(purpleHighlightIds));
+    setOrangeHighlightIds(new Set(orangeHighlightIds));
+    setRedHighlightIds(new Set(redHighlightIds));
+    setUnderlineIds([]);
+  };
+
+  const saveHighlights = async () => {
+    await saveYellowHighlights();
+    await saveBlueHighlights();
+    await savePinkHighlights();
+    await saveGreenHighlights();
+    await savePurpleHighlights();
+    await saveOrangeHighlights();
+    await saveRedHighlights();
+  };
+
+  const saveYellowHighlights = async () => {
+    await db()
+      .ref(`/users/${userInfo.uid}/highlights/${book}/yellow/`)
+      .set({ Verses: Array.from(yellowHighlightIds) });
+  };
+
+  const saveBlueHighlights = async () => {
+    await db()
+      .ref(`/users/${userInfo.uid}/highlights/${book}/blue/`)
+      .set({ Verses: Array.from(blueHighlightIds) });
+  };
+
+  const savePinkHighlights = async () => {
+    await db()
+      .ref(`/users/${userInfo.uid}/highlights/${book}/pink/`)
+      .set({ Verses: Array.from(pinkHighlightIds) });
+  };
+
+  const saveGreenHighlights = async () => {
+    await db()
+      .ref(`/users/${userInfo.uid}/highlights/${book}/green/`)
+      .set({ Verses: Array.from(greenHighlightIds) });
+  };
+
+  const savePurpleHighlights = async () => {
+    await db()
+      .ref(`/users/${userInfo.uid}/highlights/${book}/purple/`)
+      .set({ Verses: Array.from(purpleHighlightIds) });
+  };
+
+  const saveOrangeHighlights = async () => {
+    await db()
+      .ref(`/users/${userInfo.uid}/highlights/${book}/orange/`)
+      .set({ Verses: Array.from(orangeHighlightIds) });
+  };
+
+  const saveRedHighlights = async () => {
+    await db()
+      .ref(`/users/${userInfo.uid}/highlights/${book}/red`)
+      .set({ Verses: Array.from(redHighlightIds) });
+  };
+
   const highlightYellow = () => {
+    removeHighlight();
     underlineIds.forEach((verse) => {
       yellowHighlightIds.add(verse);
     });
-    setHighlightYellowHighlightIds(new Set(yellowHighlightIds));
+    setYellowHighlightIds(new Set(yellowHighlightIds));
     setUnderlineIds([]);
+    saveHighlights();
+  };
+
+  const highlightBlue = () => {
+    removeHighlight();
+    underlineIds.forEach((verse) => {
+      blueHighlightIds.add(verse);
+    });
+    setBlueHighlightIds(new Set(blueHighlightIds));
+    setUnderlineIds([]);
+    saveHighlights();
+  };
+
+  const highlightPink = () => {
+    removeHighlight();
+    underlineIds.forEach((verse) => {
+      pinkHighlightIds.add(verse);
+    });
+    setPinkHighlightIds(new Set(pinkHighlightIds));
+    setUnderlineIds([]);
+    saveHighlights();
+  };
+
+  const highlightGreen = () => {
+    removeHighlight();
+    underlineIds.forEach((verse) => {
+      greenHighlightIds.add(verse);
+    });
+    setGreenHighlightIds(new Set(greenHighlightIds));
+    setUnderlineIds([]);
+    saveHighlights();
+  };
+
+  const highlightPurple = () => {
+    removeHighlight();
+    underlineIds.forEach((verse) => {
+      purpleHighlightIds.add(verse);
+    });
+    setPurpleHighlightIds(new Set(purpleHighlightIds));
+    setUnderlineIds([]);
+    saveHighlights();
+  };
+
+  const highlightOrange = () => {
+    removeHighlight();
+    underlineIds.forEach((verse) => {
+      orangeHighlightIds.add(verse);
+    });
+    setOrangeHighlightIds(new Set(orangeHighlightIds));
+    setUnderlineIds([]);
+    saveHighlights();
+  };
+
+  const highlightRed = () => {
+    removeHighlight();
+    underlineIds.forEach((verse) => {
+      redHighlightIds.add(verse);
+    });
+    setRedHighlightIds(new Set(redHighlightIds));
+    setUnderlineIds([]);
+    saveHighlights();
   };
 
   // Helper Functions
@@ -220,6 +377,10 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
 
   return (
     <View style={{ flexDirection: "column" }}>
+      <TouchableOpacity onPress={saveHighlights}>
+        <Text style={{ color: "white" }}>PRESS ME</Text>
+      </TouchableOpacity>
+
       <ScrollView
         ref={scrollViewRef}
         scrollEventThrottle={16}
@@ -247,6 +408,12 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
                     onPress={(e) => handleTextPress(e, textNoNewline[0])}
                     onLayout={handleTextLayout}
                     yellowHighlightIds={yellowHighlightIds}
+                    blueHighlightIds={blueHighlightIds}
+                    pinkHighlightIds={pinkHighlightIds}
+                    greenHighlightIds={greenHighlightIds}
+                    purpleHighlightIds={purpleHighlightIds}
+                    orangeHighlightIds={orangeHighlightIds}
+                    redHighlightIds={redHighlightIds}
                     comments={comments}
                     selectedComment={currVerseComment}
                     underlineIds={underlineIds}
@@ -420,6 +587,13 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
               showExplain={showExplain}
               showAI={showAI}
               highlightYellow={highlightYellow}
+              highlightBlue={highlightBlue}
+              highlightPink={highlightPink}
+              highlightGreen={highlightGreen}
+              highlightPurple={highlightPurple}
+              highlightOrange={highlightOrange}
+              highlightRed={highlightRed}
+              removeHighlight={removeHighlight}
               showCommentInput={showCommentInput}
             />
           </SwipeableFooter>

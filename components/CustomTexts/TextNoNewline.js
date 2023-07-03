@@ -82,6 +82,138 @@ const TextNoNewline = forwardRef((props, ref) => {
     );
   }
 
+  // Handle blue highlight
+  if (props.blueHighlightIds?.has(props.verse)) {
+    return (
+      <Text
+        {...props}
+        ref={ref}
+        style={[
+          {
+            color: "white",
+            backgroundColor: "#55cef2",
+            color: "black",
+          },
+          isUnderline && {
+            textDecorationLine: "underline",
+          },
+        ]}
+        onPress={toggleUnderline}
+        onLayout={props.onLayout}
+      />
+    );
+  }
+
+  // Handle pink highlight
+  if (props.pinkHighlightIds?.has(props.verse)) {
+    return (
+      <Text
+        {...props}
+        ref={ref}
+        style={[
+          {
+            color: "white",
+            backgroundColor: "#fc65a7",
+            color: "black",
+          },
+          isUnderline && {
+            textDecorationLine: "underline",
+          },
+        ]}
+        onPress={toggleUnderline}
+        onLayout={props.onLayout}
+      />
+    );
+  }
+
+  // Handle green highlight
+  if (props.greenHighlightIds?.has(props.verse)) {
+    return (
+      <Text
+        {...props}
+        ref={ref}
+        style={[
+          {
+            color: "white",
+            backgroundColor: "#63ff6e",
+            color: "black",
+          },
+          isUnderline && {
+            textDecorationLine: "underline",
+          },
+        ]}
+        onPress={toggleUnderline}
+        onLayout={props.onLayout}
+      />
+    );
+  }
+
+  // Handle purple highlight
+  if (props.purpleHighlightIds?.has(props.verse)) {
+    return (
+      <Text
+        {...props}
+        ref={ref}
+        style={[
+          {
+            color: "white",
+            backgroundColor: "#c66bfa",
+            color: "black",
+          },
+          isUnderline && {
+            textDecorationLine: "underline",
+          },
+        ]}
+        onPress={toggleUnderline}
+        onLayout={props.onLayout}
+      />
+    );
+  }
+
+  // Handle orange highlight
+  if (props.orangeHighlightIds?.has(props.verse)) {
+    return (
+      <Text
+        {...props}
+        ref={ref}
+        style={[
+          {
+            color: "white",
+            backgroundColor: "#faa466",
+            color: "black",
+          },
+          isUnderline && {
+            textDecorationLine: "underline",
+          },
+        ]}
+        onPress={toggleUnderline}
+        onLayout={props.onLayout}
+      />
+    );
+  }
+
+  // Handle red highlight
+  if (props.redHighlightIds?.has(props.verse)) {
+    return (
+      <Text
+        {...props}
+        ref={ref}
+        style={[
+          {
+            color: "white",
+            backgroundColor: "#ff2e4d",
+            color: "black",
+          },
+          isUnderline && {
+            textDecorationLine: "underline",
+          },
+        ]}
+        onPress={toggleUnderline}
+        onLayout={props.onLayout}
+      />
+    );
+  }
+
   // No syntax
   return (
     <Text

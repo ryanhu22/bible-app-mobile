@@ -39,7 +39,7 @@ const ExplainFooter = ({
   const explain = async (question) => {
     var response = `This is a mock response for EXPLAIN Footer. Your question was ${question}`;
     // response = await explainAPI(question);
-    // setExplainText(response);
+    setExplainText(response);
   };
 
   const askNextQuestion = async () => {
