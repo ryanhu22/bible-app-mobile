@@ -72,14 +72,14 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
   useEffect(() => {
     scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: false });
     setUnderlineIds([]);
-    setYellowHighlightIds(new Set());
-    setBlueHighlightIds(new Set());
-    setPinkHighlightIds(new Set());
-    setGreenHighlightIds(new Set());
-    setPurpleHighlightIds(new Set());
-    setOrangeHighlightIds(new Set());
-    setRedHighlightIds(new Set());
-    setComments({});
+    // setYellowHighlightIds(new Set());
+    // setBlueHighlightIds(new Set());
+    // setPinkHighlightIds(new Set());
+    // setGreenHighlightIds(new Set());
+    // setPurpleHighlightIds(new Set());
+    // setOrangeHighlightIds(new Set());
+    // setRedHighlightIds(new Set());
+    // setComments({});
     setCurrVerseComment(null);
     setShowCommentFooter(false);
     setShowCommentFooterInput(false);
@@ -92,6 +92,98 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
       }
     };
     checkUser();
+  }, [passage]);
+
+  // Handle reading in highlights DB
+  useEffect(() => {
+    setYellowHighlightIds(new Set());
+    setBlueHighlightIds(new Set());
+    setPinkHighlightIds(new Set());
+    setGreenHighlightIds(new Set());
+    setPurpleHighlightIds(new Set());
+    setOrangeHighlightIds(new Set());
+    setRedHighlightIds(new Set());
+    setComments({});
+
+    const readHighlights = async () => {
+      // Get current bookmarks
+      await db()
+        .ref(`/users/${userInfo.uid}/highlights/${book}/${chapter}/`)
+        .once("value")
+        .then((snapshot) => {
+          if (snapshot.val()) {
+            const highlights_results = snapshot.val();
+            // Yellow
+            if (highlights_results["yellow"]) {
+              const yellow_results = new Set(
+                highlights_results["yellow"]["Verses"]
+              );
+              setYellowHighlightIds(yellow_results);
+            }
+
+            // Blue
+            if (highlights_results["blue"]) {
+              const blue_results = new Set(
+                highlights_results["blue"]["Verses"]
+              );
+              setBlueHighlightIds(blue_results);
+            }
+
+            // Pink
+            if (highlights_results["pink"]) {
+              const pink_results = new Set(
+                highlights_results["pink"]["Verses"]
+              );
+              setPinkHighlightIds(pink_results);
+            }
+
+            // Green
+            if (highlights_results["green"]) {
+              const green_results = new Set(
+                highlights_results["green"]["Verses"]
+              );
+              setGreenHighlightIds(green_results);
+            }
+
+            // Purple
+            if (highlights_results["purple"]) {
+              const purple_results = new Set(
+                highlights_results["purple"]["Verses"]
+              );
+              setPurpleHighlightIds(purple_results);
+            }
+
+            // Orange
+            if (highlights_results["orange"]) {
+              const orange_results = new Set(
+                highlights_results["orange"]["Verses"]
+              );
+              setOrangeHighlightIds(orange_results);
+            }
+
+            // Red
+            if (highlights_results["red"]) {
+              const red_results = new Set(highlights_results["red"]["Verses"]);
+              setRedHighlightIds(red_results);
+            }
+          }
+        });
+    };
+
+    const readComments = async () => {
+      await db()
+        .ref(`/users/${userInfo.uid}/comments/${book}/${chapter}/`)
+        .once("value")
+        .then((snapshot) => {
+          if (snapshot.val()) {
+            const comments_results = snapshot.val();
+            setComments(comments_results["Comments"]);
+          }
+        });
+    };
+
+    readHighlights();
+    readComments();
   }, [passage]);
 
   // Handle automatic closing of footer when no underlines
@@ -153,6 +245,12 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
     setScrollHeight(e.nativeEvent.contentOffset.y);
   };
 
+  const saveComments = async (newComments) => {
+    await db()
+      .ref(`/users/${userInfo.uid}/comments/${book}/${chapter}/`)
+      .set({ Comments: newComments });
+  };
+
   const sendComment = () => {
     removeHighlight();
     if (commentInput === "") {
@@ -166,6 +264,7 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
     setComments(updatedComments);
     setCommentInput("");
     hideCommentInput();
+    saveComments(updatedComments);
   };
 
   const sendCustomComment = (customComment) => {
@@ -197,6 +296,8 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
     setOrangeHighlightIds(new Set(orangeHighlightIds));
     setRedHighlightIds(new Set(redHighlightIds));
     setUnderlineIds([]);
+
+    saveHighlights();
   };
 
   const saveHighlights = async () => {
@@ -211,43 +312,43 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
 
   const saveYellowHighlights = async () => {
     await db()
-      .ref(`/users/${userInfo.uid}/highlights/${book}/yellow/`)
+      .ref(`/users/${userInfo.uid}/highlights/${book}/${chapter}/yellow/`)
       .set({ Verses: Array.from(yellowHighlightIds) });
   };
 
   const saveBlueHighlights = async () => {
     await db()
-      .ref(`/users/${userInfo.uid}/highlights/${book}/blue/`)
+      .ref(`/users/${userInfo.uid}/highlights/${book}/${chapter}/blue/`)
       .set({ Verses: Array.from(blueHighlightIds) });
   };
 
   const savePinkHighlights = async () => {
     await db()
-      .ref(`/users/${userInfo.uid}/highlights/${book}/pink/`)
+      .ref(`/users/${userInfo.uid}/highlights/${book}/${chapter}/pink/`)
       .set({ Verses: Array.from(pinkHighlightIds) });
   };
 
   const saveGreenHighlights = async () => {
     await db()
-      .ref(`/users/${userInfo.uid}/highlights/${book}/green/`)
+      .ref(`/users/${userInfo.uid}/highlights/${book}/${chapter}/green/`)
       .set({ Verses: Array.from(greenHighlightIds) });
   };
 
   const savePurpleHighlights = async () => {
     await db()
-      .ref(`/users/${userInfo.uid}/highlights/${book}/purple/`)
+      .ref(`/users/${userInfo.uid}/highlights/${book}/${chapter}/purple/`)
       .set({ Verses: Array.from(purpleHighlightIds) });
   };
 
   const saveOrangeHighlights = async () => {
     await db()
-      .ref(`/users/${userInfo.uid}/highlights/${book}/orange/`)
+      .ref(`/users/${userInfo.uid}/highlights/${book}/${chapter}/orange/`)
       .set({ Verses: Array.from(orangeHighlightIds) });
   };
 
   const saveRedHighlights = async () => {
     await db()
-      .ref(`/users/${userInfo.uid}/highlights/${book}/red`)
+      .ref(`/users/${userInfo.uid}/highlights/${book}/${chapter}/red`)
       .set({ Verses: Array.from(redHighlightIds) });
   };
 
@@ -377,7 +478,7 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
 
   return (
     <View style={{ flexDirection: "column" }}>
-      <TouchableOpacity onPress={saveHighlights}>
+      <TouchableOpacity>
         <Text style={{ color: "white" }}>PRESS ME</Text>
       </TouchableOpacity>
 
