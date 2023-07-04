@@ -8,16 +8,19 @@ import {
   Dimensions,
 } from "react-native";
 import React from "react";
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, FontAwesome } from "@expo/vector-icons";
 
-const ShowCommentFooter = ({ currVerseComment, comments }) => {
+const ShowCommentFooter = ({ currVerseComment, comments, deleteComment }) => {
+  const removeComment = () => {
+    deleteComment(currVerseComment);
+  };
+
   return (
     <View style={styles.footer}>
       {/* Header */}
       <View
         style={{
           flexDirection: "row",
-          justifyContent: "space-between",
           alignItems: "center",
           marginBottom: 5,
         }}
@@ -31,6 +34,9 @@ const ShowCommentFooter = ({ currVerseComment, comments }) => {
         >
           Verse {currVerseComment}
         </Text>
+        <TouchableOpacity style={{ paddingLeft: 10 }} onPress={removeComment}>
+          <FontAwesome name="trash-o" size={20} color="#ff3729" />
+        </TouchableOpacity>
       </View>
 
       <ScrollView>

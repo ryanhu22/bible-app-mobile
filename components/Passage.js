@@ -251,6 +251,14 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
       .set({ Comments: newComments });
   };
 
+  const deleteComment = async (verse) => {
+    const updatedComments = { ...comments };
+    delete updatedComments[verse];
+    setComments(updatedComments);
+    setShowCommentFooter(false);
+    saveComments(updatedComments);
+  };
+
   const sendComment = () => {
     removeHighlight();
     if (commentInput === "") {
@@ -719,6 +727,7 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
           <ShowCommentFooter
             currVerseComment={currVerseComment}
             comments={comments}
+            deleteComment={deleteComment}
           />
         </SwipeableFooter>
       ) : null}
