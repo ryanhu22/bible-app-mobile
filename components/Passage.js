@@ -486,10 +486,6 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
 
   return (
     <View style={{ flexDirection: "column" }}>
-      <TouchableOpacity>
-        <Text style={{ color: "white" }}>PRESS ME</Text>
-      </TouchableOpacity>
-
       <ScrollView
         ref={scrollViewRef}
         scrollEventThrottle={16}

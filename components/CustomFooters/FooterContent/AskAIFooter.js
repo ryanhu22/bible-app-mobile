@@ -30,9 +30,9 @@ const AskAIFooter = ({
   const [currentQuestion, setCurrentQuestion] = useState("");
 
   const explain = async (question) => {
-    var response = `This is a mock response for AI Footer. Your question was ${question}`;
-    // response = await explainAPI(question);
-    // setExplainText(response);
+    // var response = `This is a mock response for AI Footer. Your question was ${question}`;
+    response = await explainAPI(question);
+    setExplainText(response);
   };
 
   const askNextQuestion = async () => {

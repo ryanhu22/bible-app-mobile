@@ -29,8 +29,8 @@ const SummarizeFooter = ({ book, chapter, hideSummarize }) => {
   }, []);
 
   const explain = async (question) => {
-    var response = "This is a mock response for the summarize footer";
-    // response = await explainAPI(question);
+    // var response = "This is a mock response for the summarize footer";
+    response = await explainAPI(question);
     setExplainText(response);
   };
 

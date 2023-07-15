@@ -1,8 +1,13 @@
 {
   "expo": {
-    "name": "blank",
+    "name": "Just Biblically",
     "slug": "blank",
     "version": "1.0.0",
+    "icon": "./assets/icons/book-app.png",
+    "splash": {
+      "image": "./assets/icons/book-app.png",
+      "resizeMode": "contain"
+    },
     "platforms": [
       "ios",
       "android",
@@ -10,7 +15,8 @@
     ],
     "ios": {
       "googleServicesFile": "./GoogleService-Info.plist",
-      "bundleIdentifier": "com.bma.biblemobileapp"
+      "bundleIdentifier": "com.bma.biblemobileapp",
+      "buildNumber": "2"
     },
     "android": {
       "googleServicesFile": "./google-services.json",
