@@ -46,7 +46,7 @@ const Passage = ({ book, bookFormatted, chapter, passage }) => {
   const [isReset, setIsReset] = useState(false);
 
   // Highlighting Functionalities
-  const [userInfo, setUserInfo] = useState(null);
+  const [userInfo, setUserInfo] = useState({ uid: "118233805738489658590" });
   const [underlineIds, setUnderlineIds] = useState([]);
   const [yellowHighlightIds, setYellowHighlightIds] = useState(new Set());
   const [blueHighlightIds, setBlueHighlightIds] = useState(new Set());
