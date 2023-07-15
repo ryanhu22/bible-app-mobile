@@ -405,7 +405,7 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ flex: 1 }}>
-        <Header book={bibleBooks[book]} chapter={chapter} search={search} />
+        {/* <Header book={bibleBooks[book]} chapter={chapter} search={search} /> */}
         <Swipeable
           ref={swipeableRef}
           friction={1}
